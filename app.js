@@ -8,12 +8,23 @@ require('./passport')(passport);
 
 var mysql = require('mysql');
 
+/*
 var conexion = mysql.createConnection({
   host: 'ClusterMySQL-TEST01.art.com',
   database: 'turnosd',
   user: 'turnos',
   password: 'V8Rf4ZfbpS'
 });
+*/
+
+//conexion local
+var conexion = mysql.createConnection({
+  host: 'localhost',
+  database: 'turnosd',
+  user: 'root',
+  password: 'password'
+});
+
 
 conexion.connect(function(error){
   if (error)
