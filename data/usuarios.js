@@ -1,6 +1,7 @@
 const connection = require("./connection");
 var ObjectId = require('mongodb').ObjectId;
 
+/*
 async function getUsuarios(){
     const clientmongo = await connection.getConnection();
     const collection = await clientmongo.db("safe_distance")
@@ -9,6 +10,13 @@ async function getUsuarios(){
         .toArray();
     return collection;
 }
+*/
+
+async function getUsuarios(){
+    const rest = await connection.runQuery('SELECT * FROM Usuarios');
+    return rest;
+}
+
 
 async function getUsuario(usuarioId){
     let u_id = new ObjectId(usuarioId); 

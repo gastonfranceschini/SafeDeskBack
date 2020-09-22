@@ -56,6 +56,7 @@ router.post('/signup', async (req, res) => {
 
 //POST /api/auth/signin
 router.post('/signin', async (req, res) => {
+  console.log(req.body);
   const { email, password } = req.body;
   
   if (!email || !password) {
@@ -103,6 +104,14 @@ router.post('/providers', async (req, res) => {
   const token = jwt.sign({ userId: usuarioPushed.insertedId }, process.env.TokenKey);
   return res.send({ token: token, userId: usuarioPushed.insertedId });
 });
+
+
+// GET /TEST dame los usuarios
+router.get('/test', async function(req, res, next) {
+  let usuarios = await dataUsuarios.getUsuarios();
+  res.send(usuarios);
+});
+
 
 
 // Ruta para desloguearse

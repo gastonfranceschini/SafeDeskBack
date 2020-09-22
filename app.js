@@ -3,12 +3,13 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var passport = require('passport'); // Passport: Middleware de Node que facilita la autenticación de usuarios
-require('./passport')(passport);
-
-var mysql = require('mysql');
+//var passport = require('passport'); // Passport: Middleware de Node que facilita la autenticación de usuarios
+//require('./passport')(passport);
 
 /*
+var mysql = require('mysql');
+
+
 var conexion = mysql.createConnection({
   host: 'ClusterMySQL-TEST01.art.com',
   database: 'turnosd',
@@ -18,14 +19,15 @@ var conexion = mysql.createConnection({
 */
 
 //conexion local
+/*
 var conexion = mysql.createConnection({
   host: 'localhost',
   database: 'turnosd',
   user: 'root',
   password: 'password'
 });
-
-
+*/
+/*
 conexion.connect(function(error){
   if (error)
   { 
@@ -53,6 +55,7 @@ function(error,results, fields){
 
 
 conexion.end();
+*/
 
 var indexRouter = require('./routes/index');
 
@@ -77,8 +80,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.initialize());
+//app.use(passport.session());
 
 //app.use(bodyParser.json());
 
