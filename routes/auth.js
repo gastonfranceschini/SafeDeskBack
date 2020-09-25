@@ -24,23 +24,10 @@ router.post('/signup', async (req, res) => {
     //console.log("REQ:" + JSON.stringify(req.body));
 
     const usuarioNuevo = {
-        nombre: req.body.nombre,
-        apellido: req.body.apellido,
-        email: req.body.email,
+        DNI: req.body.dni,
         password: passwordCrypted,
-        direccion: {
-          calle: req.body.direccion.calle,
-          altura: req.body.direccion.altura,
-          piso: req.body.direccion.piso,
-          departamento: req.body.direccion.departamento,
-          barrio: req.body.direccion.barrio,
-          cp: req.body.direccion.cp, 
-          provincia: req.body.direccion.provincia
-        },
-        ubicacion: req.body.ubicacion,
-        fechaNacimiento: req.body.fechaNacimiento,
-        documento: req.body.documento,
-        telefonos: req.body.telefonos
+        nombre: req.body.nombre,
+        email: req.body.email,
     }
 
     let usuarioPushed = await dataUsuarios.pushUsuario(usuarioNuevo)
@@ -125,9 +112,9 @@ router.get('/facebook/callback', passport.authenticate('facebook',
 
 router.get('/google', passport.authenticate('google',{scope : ['profile']}), );
 
-router.get('/google/callback', passport.authenticate('google',
-{ session: false })
-, UsersController.generarTokenConReq
+router.get('/google/callback', passport.authenticate('google', 
+  { session: false }), 
+  UsersController.generarTokenConReq
 );
 
 module.exports = router;

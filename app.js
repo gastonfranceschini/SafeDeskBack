@@ -4,25 +4,23 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var passport = require('passport'); // Passport: Middleware de Node que facilita la autenticación de usuarios
-require('./passport')(passport);
-
+//require('./passport')(passport);
 var mysql = require('mysql');
 
-/*
+/* //conexion remota
 var conexion = mysql.createConnection({
   host: 'ClusterMySQL-TEST01.art.com',
   database: 'turnosd',
   user: 'turnos',
   password: 'V8Rf4ZfbpS'
-});
-*/
+}); */
 
 //conexion local
 var conexion = mysql.createConnection({
   host: 'localhost',
   database: 'turnosd',
   user: 'root',
-  password: 'password'
+  password: '142857'
 });
 
 
@@ -38,19 +36,17 @@ conexion.connect(function(error){
 });
 
 conexion.query("SELECT * FROM Usuarios", 
-function(error,results, fields){
-  if(error)
-  {
-    throw error;
+  function(error,results, fields){
+    if(error){
+      throw error;
+    }
+    else {
+      results.forEach(result => {
+        console.log(result);
+      })
+    }
   }
-  else
-  {
-    results.forEach(result => {
-      console.log(result);
-    })
-  }
-});
-
+);
 
 conexion.end();
 
@@ -59,8 +55,9 @@ var indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const authLoggedRouter = require('./routes/authLogged');
 
-const actividadesRouter = require('./routes/actividades');
 const usuariosRouter = require('./routes/usuarios');
+
+const actividadesRouter = require('./routes/actividades');
 const ciudadesRouter = require('./routes/ciudades');
 const turnosRouter = require('./routes/turnos');
 const barriosRouter = require('./routes/barrios');
