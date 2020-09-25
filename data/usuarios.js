@@ -1,6 +1,7 @@
 const connection = require("./connection");
 var ObjectId = require('mongodb').ObjectId;
 
+/*
 async function getUsuarios(){
     const clientmongo = await connection.getConnection();
     const collection = await clientmongo.db("safe_distance")
@@ -9,6 +10,13 @@ async function getUsuarios(){
         .toArray();
     return collection;
 }
+*/
+
+async function getUsuarios(){
+    const rest = await connection.runQuery('SELECT * FROM Usuarios');
+    return rest;
+}
+
 
 async function getUsuario(usuarioId){
     let u_id = new ObjectId(usuarioId); 
@@ -33,6 +41,13 @@ async function getUsuarioPorEmail(email){
         .collection("usuarios")
         .findOne({"email": email});
     return doc;
+}
+
+async function getUsuarioPorDNI(dni){
+
+    const user = await connection
+    .runQuery('SELECT * FROM Usuarios where DNI = "' + dni  + '"');
+    return user;
 }
 
 async function checkUsuario(usuarioEmail){
@@ -99,4 +114,4 @@ async function updateUsuarioPassword(usuario){
     return result;
 }
 
-module.exports = {getUsuarios, getUsuario, checkUsuario, pushUsuario,getUsuarioPorProvider,getUsuarioPorEmail,updateUsuarioPassword,updateUsuario};
+module.exports = {getUsuarios, getUsuarioPorDNI,getUsuario, checkUsuario, pushUsuario,getUsuarioPorProvider,getUsuarioPorEmail,updateUsuarioPassword,updateUsuario};

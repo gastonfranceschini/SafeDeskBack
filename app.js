@@ -8,6 +8,12 @@ var passport = require('passport'); // Passport: Middleware de Node que facilita
 var mysql = require('mysql');
 
 /* //conexion remota
+//var passport = require('passport'); // Passport: Middleware de Node que facilita la autenticación de usuarios
+//require('./passport')(passport);
+
+/*
+var mysql = require('mysql');
+
 var conexion = mysql.createConnection({
   host: 'ClusterMySQL-TEST01.art.com',
   database: 'turnosd',
@@ -16,14 +22,15 @@ var conexion = mysql.createConnection({
 }); */
 
 //conexion local
+/*
 var conexion = mysql.createConnection({
   host: 'localhost',
   database: 'turnosd',
   user: 'root',
   password: '142857'
 });
-
-
+*/
+/*
 conexion.connect(function(error){
   if (error)
   { 
@@ -49,6 +56,10 @@ conexion.query("SELECT * FROM Usuarios",
 );
 
 conexion.end();
+*/
+
+//const bcrypt = require('bcrypt');
+//console.log(bcrypt.hashSync("100", 10));
 
 var indexRouter = require('./routes/index');
 
@@ -74,8 +85,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.initialize());
+//app.use(passport.session());
 
 //app.use(bodyParser.json());
 
