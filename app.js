@@ -4,32 +4,25 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var passport = require('passport'); // Passport: Middleware de Node que facilita la autenticación de usuarios
-//require('./passport')(passport);
 var mysql = require('mysql');
 
-/* //conexion remota
-//var passport = require('passport'); // Passport: Middleware de Node que facilita la autenticación de usuarios
-//require('./passport')(passport);
 
-/*
-var mysql = require('mysql');
-
-var conexion = mysql.createConnection({
-  host: 'ClusterMySQL-TEST01.art.com',
-  database: 'turnosd',
-  user: 'turnos',
-  password: 'V8Rf4ZfbpS'
-}); */
+// Conexión Remota
+// var conexion = mysql.createConnection({
+//   host: 'ClusterMySQL-TEST01.art.com',
+//   database: 'turnosd',
+//   user: 'turnos',
+//   password: 'V8Rf4ZfbpS'
+// });
 
 //conexion local
-/*
 var conexion = mysql.createConnection({
   host: 'localhost',
   database: 'turnosd',
   user: 'root',
   password: '142857'
 });
-*/
+
 /*
 conexion.connect(function(error){
   if (error)
