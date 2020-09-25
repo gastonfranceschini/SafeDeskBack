@@ -21,7 +21,7 @@ async function getConnection() {
 }
 
 async function getConnectionSQL() {
-    if (instanceMySQL == null) {
+    /*if (instanceMySQL == null) {
         try {
             instanceMySQL = mysql.createConnection({
                 host: 'ClusterMySQL-TEST01.art.com',
@@ -33,7 +33,7 @@ async function getConnectionSQL() {
         } catch (err) {
             console.log(err.message)
         }
-    }
+    }*/
     return instanceMySQL
 }
 
@@ -42,25 +42,24 @@ async function runQuery(queryString) {
     var resultadoJson;
 
     var db = mysql.createConnection({
+        host: 'localhost',
+        database: 'turnosd',
+        user: 'root',
+        password: 'password'
+      });
+
+    /*var db = mysql.createConnection({
         host: 'ClusterMySQL-TEST01.art.com',
         database: 'turnosd',
         user: 'turnos',
         password: 'V8Rf4ZfbpS'
-    });
-
-    /*db.connect(function (err) {
-        if (err) {
-            console.error('Error de conexion: ' + err.stack);
-            return;
-        }
-        console.log('Conectado con el identificador ' + db.threadId);
     });*/
 
     var promesa = new Promise((resolve, reject) => 
     {
         db.query(queryString, function (error, results, fields) {
             if (error) { reject(error); return; }
-            resultadoJson = JSON.stringify(results);
+            resultadoJson = results;//JSON.stringify(results);
             //console.log(resultadoJson);
             resolve(resultadoJson);
         });

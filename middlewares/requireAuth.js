@@ -17,8 +17,8 @@ module.exports = (req, res, next) => {
     }
 
     const { userId } = payload;
-    const usuario = await dataUsuarios.getUsuario(userId);
-    req.user = usuario;
+    const usuario = await dataUsuarios.getUsuarioPorDNI(userId);
+    req.user = usuario[0];
     next();
   });
 };

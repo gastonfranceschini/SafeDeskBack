@@ -9,7 +9,6 @@ var logger = require('morgan');
 /*
 var mysql = require('mysql');
 
-
 var conexion = mysql.createConnection({
   host: 'ClusterMySQL-TEST01.art.com',
   database: 'turnosd',
@@ -56,6 +55,9 @@ function(error,results, fields){
 
 conexion.end();
 */
+
+//const bcrypt = require('bcrypt');
+//console.log(bcrypt.hashSync("100", 10));
 
 var indexRouter = require('./routes/index');
 

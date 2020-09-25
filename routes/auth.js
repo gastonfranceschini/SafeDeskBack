@@ -56,26 +56,27 @@ router.post('/signup', async (req, res) => {
 
 //POST /api/auth/signin
 router.post('/signin', async (req, res) => {
-  console.log(req.body);
-  const { email, password } = req.body;
+
+  const { dni, password } = req.body;
   
-  if (!email || !password) {
-    return res.status(422).send({ error: 'Debe ingresar Email y Password!' });
+  if (!dni || !password) {
+    return res.status(422).send({ error: 'Debe ingresar DNI y Password!' });
   }
 
-  let usuario = await dataUsuarios.getUsuarioPorEmail(email);
- 
+  let usuario = await dataUsuarios.getUsuarioPorDNI(dni);
+  usuario = usuario[0];
+  console.log(usuario.DNI);
   if(usuario == null) 
   {
-    return res.status(422).send({ error: 'Password o Email invalido!' });
+    return res.status(422).send({ error: 'Password o DNI invalido!' });
   }
 
-  if(bcrypt.compareSync(password, usuario.password)) 
+  if(bcrypt.compareSync(password, usuario.Password)) 
   {
-    const token = jwt.sign({ userId: usuario._id }, process.env.TokenKey);
-    res.send({ token: token, userId: usuario._id });
+    const token = jwt.sign({ userId: usuario.DNI }, process.env.TokenKey);
+    res.send({ token: token, userId: usuario.DNI });
   } else {
-    return res.status(422).send({ error: 'Password o Email invalido!' });
+    return res.status(422).send({ error: 'Password o DNI invalido!' });
   }
 });
 
