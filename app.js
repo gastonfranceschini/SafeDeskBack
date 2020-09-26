@@ -23,33 +23,31 @@ var conexion = mysql.createConnection({
   password: '142857'
 });
 
-/*
-conexion.connect(function(error){
-  if (error)
-  { 
-    throw error;
-  }
-  else
-  {
-    console.log('Conexion Exitosa!')
-  }
-});
+// conexion.connect(function(error){
+//   if (error)
+//   { 
+//     throw error;
+//   }
+//   else
+//   {
+//     console.log('Conexion Exitosa!')
+//   }
+// });
 
-conexion.query("SELECT * FROM Usuarios", 
-  function(error,results, fields){
-    if(error){
-      throw error;
-    }
-    else {
-      results.forEach(result => {
-        console.log(result);
-      })
-    }
-  }
-);
+// conexion.query("SELECT * FROM Usuarios", 
+//   function(error,results, fields){
+//     if(error){
+//       throw error;
+//     }
+//     else {
+//       results.forEach(result => {
+//         console.log(result);
+//       })
+//     }
+//   }
+// );
 
-conexion.end();
-*/
+// conexion.end();
 
 //const bcrypt = require('bcrypt');
 //console.log(bcrypt.hashSync("100", 10));

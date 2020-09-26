@@ -45,7 +45,7 @@ router.post('/signup', async (req, res) => {
 router.post('/signin', async (req, res) => {
 
   const { dni, password } = req.body;
-  
+   
   if (!dni || !password) {
     return res.status(422).send({ error: 'Debe ingresar DNI y Password!' });
   }
