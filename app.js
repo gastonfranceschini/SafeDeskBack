@@ -3,58 +3,51 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-//var passport = require('passport'); // Passport: Middleware de Node que facilita la autenticación de usuarios
-//require('./passport')(passport);
-
-/*
+var passport = require('passport'); // Passport: Middleware de Node que facilita la autenticación de usuarios
 var mysql = require('mysql');
 
-var conexion = mysql.createConnection({
-  host: 'ClusterMySQL-TEST01.art.com',
-  database: 'turnosd',
-  user: 'turnos',
-  password: 'V8Rf4ZfbpS'
-});
-*/
+
+// Conexión Remota
+// var conexion = mysql.createConnection({
+//   host: 'ClusterMySQL-TEST01.art.com',
+//   database: 'turnosd',
+//   user: 'turnos',
+//   password: 'V8Rf4ZfbpS'
+// });
 
 //conexion local
-/*
 var conexion = mysql.createConnection({
   host: 'localhost',
   database: 'turnosd',
   user: 'root',
-  password: 'password'
-});
-*/
-/*
-conexion.connect(function(error){
-  if (error)
-  { 
-    throw error;
-  }
-  else
-  {
-    console.log('Conexion Exitosa!')
-  }
+  password: '142857'
 });
 
-conexion.query("SELECT * FROM Usuarios", 
-function(error,results, fields){
-  if(error)
-  {
-    throw error;
-  }
-  else
-  {
-    results.forEach(result => {
-      console.log(result);
-    })
-  }
-});
+// conexion.connect(function(error){
+//   if (error)
+//   { 
+//     throw error;
+//   }
+//   else
+//   {
+//     console.log('Conexion Exitosa!')
+//   }
+// });
 
+// conexion.query("SELECT * FROM Usuarios", 
+//   function(error,results, fields){
+//     if(error){
+//       throw error;
+//     }
+//     else {
+//       results.forEach(result => {
+//         console.log(result);
+//       })
+//     }
+//   }
+// );
 
-conexion.end();
-*/
+// conexion.end();
 
 //const bcrypt = require('bcrypt');
 //console.log(bcrypt.hashSync("100", 10));
@@ -64,8 +57,9 @@ var indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const authLoggedRouter = require('./routes/authLogged');
 
-const actividadesRouter = require('./routes/actividades');
 const usuariosRouter = require('./routes/usuarios');
+
+const actividadesRouter = require('./routes/actividades');
 const ciudadesRouter = require('./routes/ciudades');
 const turnosRouter = require('./routes/turnos');
 const barriosRouter = require('./routes/barrios');

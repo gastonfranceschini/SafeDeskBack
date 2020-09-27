@@ -2,8 +2,8 @@ const express = require('express');
 const dataUsuarios = require('../data/usuarios');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const satisfactorio = { estado: 'satisfactorio' }
 
+const satisfactorio = { estado: 'satisfactorio' }
 const fallido = { estado: 'fallido' }
 
 // GET /api/usuarios
@@ -12,71 +12,41 @@ router.get('/', async function(req, res, next) {
   res.send(usuarios);
 });
 
-// GET /api/usuarios/:id
-router.get('/:id', async (req, res, next)=>{
-    let usuario = await dataUsuarios.getUsuario(req.params.id);
-    res.send(usuario);
-});
-
-//DEPRECADO - Se usa signin
-// POST /api/usuarios 
-router.post('/', async (req, res, next)=>{
-    //Verifico si ya existe el usuario por su email
-    let usuario = await dataUsuarios.checkUsuario(req.body.email);
-    if(usuario != null) {
-      res.send('El email ingresado ya se encuentra registrado.')
-    } else {
-      usuario = {
-              nombre: req.body.nombre,
-              apellido: req.body.apellido,
-              email: req.body.email,
-              password: req.body.password,
-              direccion: {
-                calle: req.body.direccion.calle,
-                altura: req.body.direccion.altura,
-                piso: req.body.direccion.piso,
-                departamento: req.body.direccion.departamento,
-                barrio: req.body.direccion.barrio,
-                cp: req.body.direccion.cp, 
-                Provincia: req.body.direccion.provincia
-              },
-              ubicacion: req.body.ubicacion,
-              fechaNacimiento: req.body.fechaNacimiento,
-              documento: req.body.documento,
-              telefonos: req.body.telefonos,
-              aptoMedico: req.body.aptoMedico
-          }
-      let resultado = await dataUsuarios.pushUsuario(usuario)
-
-      console.log("NUEVO USUARIO: "+ JSON.stringify(usuario))
-      console.log("NUEVO USUARIO AGREGADO :" + resultado.result.n)
-      if(resultado.result.n==1){
-          res.send(satisfactorio)
-      }else{
-          res.send(fallido)
-      }
-    }
+//POST /api/usuarios/dni
+router.post('/dni', async (req, res, next)=>{
+    const { dni }  = req.body
+    let usuario = await dataUsuarios.getUsuarioPorDNI(dni)
+    res.send(usuario)
 });
 
 // PUT /api/usuarios/password cambia la pass
 router.put('/password', async (req, res, next)=>{
+  const { dni, oldPassword, newPassword} = req.body
   try
   {
-    let usuario = await dataUsuarios.getUsuario(req.body._id);
+    let usuario = await dataUsuarios.getUsuarioPorDNI(dni)
+    usuario = usuario[0]
  
     if(usuario == null) 
     {
-      return res.status(422).send({ error: 'Usuario no existe!' });
+      return res.status(422).send({ error: 'Usuario no existe!' })
     }
+  
+    console.log(oldPassword)
+    console.log(usuario.Password)
 
-    if(bcrypt.compareSync(req.body.oldPassword, usuario.password)) 
+    if(bcrypt.compareSync(oldPassword, usuario.Password)) 
     {
-      let passwordCrypted = bcrypt.hashSync(req.body.newPassword, 10);
+      let passwordCrypted = bcrypt.hashSync(newPassword, 10);
+
       const userEdit = {
-        _id: req.body._id,
-        password: passwordCrypted}
+        dni: dni,
+        pass: passwordCrypted
+      }
+
       let result = await dataUsuarios.updateUsuarioPassword(userEdit)
       res.send(result)
+
     } else {
       return res.status(422).send({ error: 'Password Incorrecta!' });
     }
@@ -94,24 +64,10 @@ router.put('/', async (req, res, next)=>{
   {
     //let passwordCrypted = bcrypt.hashSync(req.body.password, 10);
     const usuarioNuevo = {
-      _id: req.body._id,
+      DNI: req.body.dni,
       nombre: req.body.nombre,
-      apellido: req.body.apellido,
-      email: req.body.email,
-      //password: passwordCrypted,
-      direccion: {
-        calle: req.body.direccion.calle,
-        altura: req.body.direccion.altura,
-        piso: req.body.direccion.piso,
-        departamento: req.body.direccion.departamento,
-        barrio: req.body.direccion.barrio,
-        cp: req.body.direccion.cp, 
-        provincia: req.body.direccion.provincia
-      },
-      fechaNacimiento: req.body.fechaNacimiento,
-      documento: req.body.documento,
-      telefonos: req.body.telefonos
-      }
+      email: req.body.email
+    }
     let result = await dataUsuarios.updateUsuario(usuarioNuevo)
     res.send(result)
   }
@@ -119,9 +75,6 @@ router.put('/', async (req, res, next)=>{
   {
     return res.status(422).send({error: 'Error al procesar la informacion: ' + message });
   }
-
 });
-
-
 
 module.exports = router;

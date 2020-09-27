@@ -1,117 +1,73 @@
 const connection = require("./connection");
 var ObjectId = require('mongodb').ObjectId;
 
-/*
-async function getUsuarios(){
-    const clientmongo = await connection.getConnection();
-    const collection = await clientmongo.db("safe_distance")
-        .collection("usuarios")
-        .find()
-        .toArray();
-    return collection;
-}
-*/
-
 async function getUsuarios(){
     const rest = await connection.runQuery('SELECT * FROM Usuarios');
     return rest;
 }
 
-
-async function getUsuario(usuarioId){
-    let u_id = new ObjectId(usuarioId); 
-    const clientmongo = await connection.getConnection();
-    const doc = await clientmongo.db("safe_distance")
-        .collection("usuarios")
-        .findOne({_id: u_id});
-    return doc;
-}
-
-async function getUsuarioPorProvider(providerId,provider){
-    const clientmongo = await connection.getConnection();
-    const doc = await clientmongo.db("safe_distance")
-        .collection("usuarios")
-        .findOne({"provider_id": providerId , "provider": provider});
-    return doc;
-}
-
-async function getUsuarioPorEmail(email){
-    const clientmongo = await connection.getConnection();
-    const doc = await clientmongo.db("safe_distance")
-        .collection("usuarios")
-        .findOne({"email": email});
-    return doc;
-}
-
 async function getUsuarioPorDNI(dni){
-
     const user = await connection
-    .runQuery('SELECT * FROM Usuarios where DNI = "' + dni  + '"');
+          .runQuery('SELECT * FROM Usuarios where DNI = "' + dni  + '"');
     return user;
 }
 
-async function checkUsuario(usuarioEmail){
-    const clientmongo = await connection.getConnection();
-    const doc = await clientmongo.db("safe_distance")
-        .collection("usuarios")
-        .findOne({email: usuarioEmail});
-    return doc;
-}
-
-async function pushUsuario(usuario){
-    const clientmongo = await connection.getConnection();
-    const result = await clientmongo.db("safe_distance")
-        .collection("usuarios")
-        .insertOne(usuario);
-    return result;
+async function getUsuarioPorEmail(email){
+    const user = await connection
+          .runQuery('SELECT * FROM Usuarios where Email = "' + email  + '"');
+    return user;
 }
 
 async function updateUsuario(usuario){
-    let o_id = new ObjectId(usuario._id); 
-    const clientmongo = await connection.getConnection();
-    const query = {_id: o_id};
+    let dni = usuario.dni
+    let pass = usuario.pass
+    let nombre = usuario.nombre
+    let email = usuario.email
+    let idTipoUsuario = usuario.IdTipoUsuario
+    let idGerencia = usuario.IdGerencia
+    let idJefeDirecto = usuario.IdJefeDirecto
 
-    const newvalues = {$set: 
-        {
-            nombre: usuario.nombre,
-            apellido: usuario.apellido,
-            //password: usuario.password,
-            direccion: {
-            calle: usuario.direccion.calle,
-            altura: usuario.direccion.altura,
-            piso: usuario.direccion.piso,
-            departamento: usuario.direccion.departamento,
-            barrio: usuario.direccion.barrio,
-            cp: usuario.direccion.cp, 
-            provincia: usuario.direccion.provincia
-            },
-            fechaNacimiento: usuario.fechaNacimiento,
-            documento: usuario.documento,
-            telefonos: usuario.telefonos
-        }
-    };
+    let query = `UPDATE usuarios \
+                  SET Password = "${pass}" \ 
+                      Nombre = "${nombre}" \
+                      Email = "${email}" \
+                      IdTipoDeUsuario = "${idTipoUsuario}" \
+                      IdGerencia = "${idGerencia}" \
+                      IdJefeDirecto = "${idJefeDirecto}" \
+                  WHERE DNI = "${dni}"`;
 
-    const result = await clientmongo.db("safe_distance")
-        .collection("usuarios")
-        .updateOne(query,newvalues);
-    return result;
+    const user = await connection
+          .runQuery(query);
+
+    return user;
 }
 
 async function updateUsuarioPassword(usuario){
-    let o_id = new ObjectId(usuario._id); 
-    const clientmongo = await connection.getConnection();
-    const query = {_id: o_id};
+    let dni = usuario.dni
+    let pass = usuario.pass
 
-    const newvalues = {$set: 
-        {
-            password: usuario.password
-        }
-    };
-
-    const result = await clientmongo.db("safe_distance")
-        .collection("usuarios")
-        .updateOne(query,newvalues);
-    return result;
+    let query = `UPDATE usuarios \
+                  SET Password = "${pass}" \ 
+                  WHERE DNI = "${dni}"`;
+    const user = await connection
+          .runQuery(query);
+    return user;
 }
 
-module.exports = {getUsuarios, getUsuarioPorDNI,getUsuario, checkUsuario, pushUsuario,getUsuarioPorProvider,getUsuarioPorEmail,updateUsuarioPassword,updateUsuario};
+// async function checkUsuario(usuarioEmail){
+//     const clientmongo = await connection.getConnection();
+//     const doc = await clientmongo.db("safe_distance")
+//         .collection("usuarios")
+//         .findOne({email: usuarioEmail});
+//     return doc;
+// }
+
+// async function pushUsuario(usuario){
+//     const clientmongo = await connection.getConnection();
+//     const result = await clientmongo.db("safe_distance")
+//         .collection("usuarios")
+//         .insertOne(usuario);
+//     return result;
+// }
+
+module.exports = {getUsuarios, getUsuarioPorDNI, getUsuarioPorEmail,updateUsuarioPassword,updateUsuario};
