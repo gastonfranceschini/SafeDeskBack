@@ -45,7 +45,8 @@ async function runQuery(queryString) {
         host: 'localhost',
         database: 'turnosd',
         user: 'root',
-        password: '142857'
+        //password: '142857'
+        password: 'password'
       });
 
     /*var db = mysql.createConnection({

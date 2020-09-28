@@ -1,7 +1,7 @@
 const connection = require("./connection");
 
 async function getEdificios(){
-    let edificios = await connection.runQuery(`SELECT * FROM edificios`)
+    let edificios = await connection.runQuery(`select id,nombre,direccion,lat,"long" as longitud from edificios`)
     return edificios
 }
 

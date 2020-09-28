@@ -31,8 +31,8 @@ router.post('/signin', async (req, res) => {
 
   if(bcrypt.compareSync(password, usuario.Password)) 
   {
-    const token = jwt.sign({ userId: usuario.Password }, process.env.TokenKey);
-    res.send({ token: token, userId: usuario.Password, userName: usuario.Nombre });
+    const token = jwt.sign({ userId: usuario.DNI }, process.env.TokenKey);
+    res.send({ token: token, userId: usuario.DNI });
   } else {
     return res.status(422).send({ error: 'Password o DNI invalido!' });
   }
