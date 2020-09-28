@@ -7,13 +7,13 @@ module.exports = (req, res, next) => {
   // authorization === 'Bearer laksjdflaksdjasdfklj'
 
   if (!authorization) {
-    return res.status(401).send({ error: 'Tenes que estar logeado, token ausente.' });
+    return res.status(401).send({ error: 'Tenés que estar logeado, token ausente.' });
   }
 
   const token = authorization.replace('Bearer ', '');
   jwt.verify(token, process.env.TokenKey, async (err, payload) => {
     if (err) {
-      return res.status(401).send({ error: 'Tenes que estar logeado, token incorrecto.' });
+      return res.status(401).send({ error: 'Tenés que estar logeado, token incorrecto.' });
     }
 
     const { userId } = payload;

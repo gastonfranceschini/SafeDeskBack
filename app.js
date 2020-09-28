@@ -58,12 +58,13 @@ const authRouter = require('./routes/auth');
 const authLoggedRouter = require('./routes/authLogged');
 
 const usuariosRouter = require('./routes/usuarios');
+const edificiosRouter = require('./routes/edificios');
+
 
 const actividadesRouter = require('./routes/actividades');
 const ciudadesRouter = require('./routes/ciudades');
 const turnosRouter = require('./routes/turnos');
 const barriosRouter = require('./routes/barrios');
-const establecimientosRouter = require('./routes/establecimientos');
 
 var app = express();
 
@@ -87,7 +88,7 @@ app.use('/api/actividades', actividadesRouter);
 app.use('/api/ciudades', ciudadesRouter);
 app.use('/api/turnos', turnosRouter);
 app.use('/api/barrios', barriosRouter);
-app.use('/api/establecimientos', establecimientosRouter);
+app.use('/api/edificios', edificiosRouter);
 //rutas login
 app.use('/api/logged',authLoggedRouter);
 app.use('/api/auth',authRouter);
