@@ -1,21 +1,20 @@
 const connection = require("./connection");
-var ObjectId = require('mongodb').ObjectId;
 
 async function getUsuarios(){
-    const rest = await connection.runQuery('SELECT * FROM Usuarios');
-    return rest;
+    const rest = await connection.runQuery('SELECT * FROM Usuarios')
+    return rest
 }
 
 async function getUsuarioPorDNI(dni){
     const user = await connection
-          .runQuery('SELECT * FROM Usuarios where DNI = "' + dni  + '"');
-    return user;
+          .runQuery('SELECT * FROM Usuarios where DNI = "' + dni  + '"')
+    return user
 }
 
 async function getUsuarioPorEmail(email){
     const user = await connection
-          .runQuery('SELECT * FROM Usuarios where Email = "' + email  + '"');
-    return user;
+          .runQuery('SELECT * FROM Usuarios where Email = "' + email  + '"')
+    return user
 }
 
 async function updateUsuario(usuario){
@@ -34,12 +33,12 @@ async function updateUsuario(usuario){
                       IdTipoDeUsuario = "${idTipoUsuario}" \
                       IdGerencia = "${idGerencia}" \
                       IdJefeDirecto = "${idJefeDirecto}" \
-                  WHERE DNI = "${dni}"`;
+                  WHERE DNI = "${dni}"`
 
     const user = await connection
-          .runQuery(query);
+          .runQuery(query)
 
-    return user;
+    return user
 }
 
 async function updateUsuarioPassword(usuario){
@@ -48,11 +47,15 @@ async function updateUsuarioPassword(usuario){
 
     let query = `UPDATE usuarios \
                   SET Password = "${pass}" \ 
-                  WHERE DNI = "${dni}"`;
+                  WHERE DNI = "${dni}"`
     const user = await connection
-          .runQuery(query);
-    return user;
+          .runQuery(query)
+    return user
 }
+
+module.exports = {getUsuarios, getUsuarioPorDNI, getUsuarioPorEmail,updateUsuarioPassword,updateUsuario}
+
+
 
 // async function checkUsuario(usuarioEmail){
 //     const clientmongo = await connection.getConnection();
@@ -69,5 +72,3 @@ async function updateUsuarioPassword(usuario){
 //         .insertOne(usuario);
 //     return result;
 // }
-
-module.exports = {getUsuarios, getUsuarioPorDNI, getUsuarioPorEmail,updateUsuarioPassword,updateUsuario};

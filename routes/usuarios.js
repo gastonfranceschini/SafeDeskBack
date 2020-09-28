@@ -2,9 +2,12 @@ const express = require('express');
 const dataUsuarios = require('../data/usuarios');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const requireAuth = require('../middlewares/requireAuth');
 
-const satisfactorio = { estado: 'satisfactorio' }
-const fallido = { estado: 'fallido' }
+// const satisfactorio = { estado: 'satisfactorio' }
+// const fallido = { estado: 'fallido' }
+
+router.use(requireAuth);
 
 // GET /api/usuarios
 router.get('/', async function(req, res, next) {
@@ -16,10 +19,10 @@ router.get('/', async function(req, res, next) {
 router.post('/dni', async (req, res, next)=>{
     const { dni }  = req.body
     let usuario = await dataUsuarios.getUsuarioPorDNI(dni)
-    res.send(usuario)
+    res.send(usuario[0])
 });
 
-// PUT /api/usuarios/password cambia la pass
+// PUT /api/usuarios/password - cambiar password
 router.put('/password', async (req, res, next)=>{
   const { dni, oldPassword, newPassword} = req.body
   try
