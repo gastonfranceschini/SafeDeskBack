@@ -29,6 +29,7 @@ router.post('/signin', async (req, res) => {
   // console.log("User Pass: " + usuario.Password);
   // console.log("User Name: " + usuario.Nombre);
 
+  //  if(password == usuario.Password)
   if(bcrypt.compareSync(password, usuario.Password)) 
   {
     const token = jwt.sign({ userId: usuario.DNI }, process.env.TokenKey);
