@@ -7,13 +7,13 @@ async function getUsuarios(){
 
 async function getUsuarioPorDNI(dni){
     const user = await connection
-          .runQuery('SELECT * FROM Usuarios where DNI = "' + dni  + '"')
+          .runQuery(`SELECT * FROM Usuarios where DNI = "${dni}"`)
     return user
 }
 
 async function getUsuarioPorEmail(email){
     const user = await connection
-          .runQuery('SELECT * FROM Usuarios where Email = "' + email  + '"')
+          .runQuery(`SELECT * FROM Usuarios where Email = "${email}"`)
     return user
 }
 
