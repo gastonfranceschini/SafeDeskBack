@@ -2,43 +2,41 @@ const express = require('express');
 const dataTurnos = require('../data/turnos');
 const router = express.Router();
 const requireAuth = require('../middlewares/requireAuth');
+
 var ObjectId = require('mongodb').ObjectId;
 var dateFormat = require('dateformat');
 
 const satisfactorio = 'satisfactorio' 
-
 const fallido = 'fallo la reserva del turno' 
-
 const yaReservado = 'Ya ha realizado esta reserva anteriormente.' 
-
 const cupoMaximoAlcanzado = 'Ya se ha alcanzado el cupo maximo' 
 
 router.use(requireAuth);
 
-//GET /api/turnos
+//GET /api/turnos - Todos los turnos
 router.get('/', async function(req, res, next) {
   let turnos = await dataTurnos.getTurnos();
   res.send(turnos);
 });
 
-//GET /api/turnos/usuario/:id
+//GET /api/turnos/usuario/:id - Turnos por Usuario ID
 router.get('/usuario/:id', async (req, res, next)=>{
     let turno = await dataTurnos.getTurnosPorUsuario(req.params.id);
     res.send(turno);
 });
 
-//GET /api/turnos/:id
+//GET /api/turnos/:id - Turnos por ID
 router.get('/:id', async (req, res, next)=>{
     let turno = await dataTurnos.getTurnoPorId(req.params.id);
     res.send(turno);
 });
 
-//GET /api/turnos/actividad/:actividadId/fecha/:fecha
-router.get('/actividad/:actividadId/fecha/:fecha', async (req, res, next)=>{
-    let cantidadTurnos = await dataTurnos.getCantidadTurnos(req.params.actividadId, req.params.fecha);
+//GET /api/turnos/gerencia/:gerenciaId/fecha/:fecha 
+router.get('/gerencia/:gerenciaId/fecha/:fecha', async (req, res, next)=>{
+    let cantidadTurnos = await dataTurnos.getCantidadTurnos(req.params.gerenciaId, req.params.fecha);
     console.log ("cant: " + cantidadTurnos);
     const resultado = {
-        actividad: req.params.actividadId,
+        gerencia: req.params.gerenciaId,
         fecha: req.params.fecha,
         cantidad: cantidadTurnos
     }
@@ -55,15 +53,15 @@ router.post('/', async (req, res, next)=>{
     }
     
 
-    let turnoReservado = await dataTurnos.verificarReserva(req.body.usuarioId,req.body.actividadId, req.body.fechaActividad)
+    let turnoReservado = await dataTurnos.verificarReserva(req.body.usuarioId,req.body.gerenciaId, req.body.fechaActividad)
     .then(
         responseVerfificarReserva=> {
             //console.log ("TURNO_RESERVADO: " + responseVerfificarReserva);
-            dataTurnos.getCantidadTurnos(req.body.actividadId, req.body.fechaActividad)
+            dataTurnos.getCantidadTurnos(req.body.gerenciaId, req.body.fechaActividad)
             .then(
                 responseCantidadTurnos=> {
                     //console.log ("CANTIDAD_TURNOS: " + responseCantidadTurnos);
-                    dataTurnos.getCupoActividad(req.body.actividadId)
+                    dataTurnos.getCupoActividad(req.body.gerenciaId)
                     .then(
                         responseCupoActividad=> {
                             if (responseVerfificarReserva>0){
@@ -80,7 +78,7 @@ router.post('/', async (req, res, next)=>{
                             }else{
                                 let nuevoTurno = {
                                     _id: req.params.idTurno,
-                                    actividadId: ObjectId(req.body.actividadId),
+                                    gerenciaId: ObjectId(req.body.gerenciaId),
                                     usuarioId: ObjectId(req.body.usuarioId),
                                     fechaActividad: req.body.fechaActividad,
                                     fechaReserva: dateFormat(new Date(), "isoDateTime"),
@@ -132,25 +130,25 @@ router.put('/:idTurno/usuario/:idUsuario', async (req, res, next)=>{
     let turno = await dataTurnos.getTurnoPorId(req.params.idTurno);
     console.log('TURNO: '+ JSON.stringify(turno))
     //si mi turno nuevo es diferente hago mas validaciones
-    if (turno.actividadId != ObjectId(req.body.actividadId) || turno.fechaActividad != req.body.fechaActividad)
+    if (turno.gerenciaId != ObjectId(req.body.gerenciaId) || turno.fechaActividad != req.body.fechaActividad)
     {
         if (new Date(req.body.fechaActividad) < new Date()) 
         {
             return res.status(422).send({error: 'Fecha menor a la actual...'});
         }
 
-        var cantidadTurnos = await dataTurnos.getCantidadTurnos(req.body.actividadId, req.params.idUsuario);
-        var cupo = await dataTurnos.getCupoActividad(req.body.actividadId);
+        var cantidadTurnos = await dataTurnos.getCantidadTurnos(req.body.gerenciaId, req.params.idUsuario);
+        var cupo = await dataTurnos.getCupoActividad(req.body.gerenciaId);
         if (cantidadTurnos >= cupo) 
         {
-            return res.status(422).send({error: 'Ya se alcanzo el cupo maximo para esta actividad...'});
+            return res.status(422).send({error: 'Ya se alcanzo el cupo maximo para esta gerencia...'});
         } 
         console.log('CUPO: '+ cupo)
         console.log('CANT TURNOS: '+ cantidadTurnos)
     }
     let nuevoTurno = {
         _id: req.params.idTurno,
-        actividadId: ObjectId(req.body.actividadId),
+        gerenciaId: ObjectId(req.body.gerenciaId),
         usuarioId: ObjectId(req.body.usuarioId),
         fechaActividad: req.body.fechaActividad,
         fechaReserva: dateFormat(new Date(), "isoDateTime"),
