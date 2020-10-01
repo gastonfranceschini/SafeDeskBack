@@ -9,11 +9,18 @@ const requireAuth = require('../middlewares/requireAuth');
 
 router.use(requireAuth);
 
+// GET /api/usuarios/dependientes
+router.get('/dependientes', async function(req, res, next) {
+  let usuarios = await dataUsuarios.getUsuariosDependientes(req.user);
+  res.send(usuarios);
+});
+
 // GET /api/usuarios
 router.get('/', async function(req, res, next) {
   let usuarios = await dataUsuarios.getUsuarios();
   res.send(usuarios);
 });
+
 
 //POST /api/usuarios/dni
 router.post('/dni', async (req, res, next)=>{

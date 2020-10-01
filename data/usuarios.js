@@ -1,7 +1,36 @@
 const connection = require("./connection");
 
+const T_OPERADOR = 1;
+const T_SUPERVISOR = 2;
+const T_GERENTE = 3;
+const T_ADMINISTRADOR = 4;
+const T_SEGURIDAD = 5;
+
 async function getUsuarios(){
     const rest = await connection.runQuery('SELECT * FROM Usuarios')
+    return rest
+}
+
+async function getUsuariosDependientes(usuario){
+
+    let query;
+
+    if (usuario.IdTipoDeUsuario == T_OPERADOR || usuario.IdTipoDeUsuario == T_SUPERVISOR)
+    {
+        query = 'select dni,nombre from usuarios where ' /
+        'IdJefeDirecto = "' + usuario.DNI  + '" or DNI = "' + usuario.DNI  + '"';
+    }
+    else if (usuario.IdTipoDeUsuario == T_GERENTE)
+    {
+        query = 'select dni,nombre from usuarios where ' /
+        'IdGerencia = ' + usuario.IdGerencia;
+    }
+    else
+    {
+        query = 'select dni,nombre from usuarios';
+    }
+
+    const rest = await connection.runQuery(query);
     return rest
 }
 
@@ -53,7 +82,7 @@ async function updateUsuarioPassword(usuario){
     return user
 }
 
-module.exports = {getUsuarios, getUsuarioPorDNI, getUsuarioPorEmail,updateUsuarioPassword,updateUsuario}
+module.exports = {getUsuarios, getUsuarioPorDNI, getUsuarioPorEmail,updateUsuarioPassword,updateUsuario,getUsuariosDependientes}
 
 
 
