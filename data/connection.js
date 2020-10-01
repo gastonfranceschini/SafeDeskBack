@@ -41,10 +41,10 @@ async function runQuery(queryString) {
     var resultadoJson;
 
     var db = mysql.createConnection({
-        host: 'localhost', //10.78.160.5
+        host:  '10.78.160.5', //'localhost', //10.78.160.5
         database: 'turnosd',
-        user: 'root', //turnos
-        password: 'password' // '142857' //'V8Rf4ZfbpS'
+        user: 'turnos', //turnos
+        password: 'V8Rf4ZfbpS' // password // '142857' //'V8Rf4ZfbpS'
       });
 
     /*var db = mysql.createConnection({
