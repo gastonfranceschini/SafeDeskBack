@@ -16,28 +16,40 @@ async function getTurnoPorId(turnoId){
     return rest
 }
 
-async function getCantidadTurnos(actividadId, fechaActividad){
-    let o_aid = new ObjectId(actividadId); 
-    const clientmongo = await connection.getConnection();
-    const cant = await clientmongo.db("safe_distance")
-        .collection("turnos")
-        .find({ "actividadId": o_aid ,
-             "fechaActividad" : fechaActividad
-        })
-        .count();
-    return cant;
+// cupo x fecha endpoint EDIFICIO
+async function getCupoTurnosPorEdificio(IdGerencia, fechaTurno){
+    const cupoTurnosPorEdificio = await 
+      connection.runQuery(`SELECT SUM(pxg.Cupo - ( SELECT  COUNT(*) 
+                                                    FROM turnos t 
+                                                    WHERE t.FechaTurno = '${fechaTurno}' 
+                                                      AND t.IdPisoXGerencia = pxg.Id )) as Cupo,
+                                e.Id as eID, e.Nombre, e.Direccion
+                            FROM pisosxgerencias pxg
+                            INNER JOIN pisos p ON p.Id = pxg.IdPiso
+                            INNER JOIN edificios e ON e.Id = p.IdEdificio
+                            WHERE 	pxg.IdGerencia = ${IdGerencia} 
+                            GROUP BY eID, e.Nombre, e.Direccion
+                            HAVING Cupo > 0`)
+    return cupoTurnosPorEdificio
 }
 
+//cupo x piso para fecha endpoint Piso x Edificio x Gerencia
+async function getCupoPorPiso(IdGerencia, fechaTurno, IdEdificio){
+    const cupoTurnosPorPiso = await 
+      connection.runQuery(`SELECT SUM(pxg.Cupo - (SELECT  COUNT(*) 
+                                                    FROM turnos t 
+                                                    WHERE t.FechaTurno = '${fechaTurno}' 
+                                                    AND t.IdPisoXGerencia = pxg.Id )) as Cupo,
+                                  p.Id as pID, p.Nombre, p.Numero
+                          FROM pisosxgerencias pxg
+                          INNER JOIN pisos p ON p.Id = pxg.IdPiso
+                          WHERE 	pxg.IdGerencia = ${IdGerencia} AND p.IdEdificio = ${IdEdificio}
+                          GROUP BY pID, p.Nombre, p.Numero
+                          HAVING Cupo > 0`)
 
-
-async function getCupoActividad(actividadId){
-    let o_id = new ObjectId(actividadId); 
-    const clientmongo = await connection.getConnection();
-    const doc = await clientmongo.db("safe_distance")
-        .collection("actividades")
-        .findOne({_id:o_id});
-    return doc.cupo;
+    return cupoTurnosPorPiso
 }
+
 async function verificarReserva(usuarioId, actividadId, fechaActividad){
     let o_aid = new ObjectId(actividadId); 
     let o_uid = new ObjectId(usuarioId); 
@@ -93,5 +105,5 @@ async function deleteTurno(turnoId){
     return result;
 }
 
-module.exports = {verificarReserva, getTurnos, getTurnoPorId, updateTurno, pushTurno, deleteTurno, getTurnosPorUsuario,getCantidadTurnos,getCupoActividad};
+module.exports = {verificarReserva, getTurnos, getTurnoPorId, updateTurno, pushTurno, deleteTurno, getTurnosPorUsuario,getCupoTurnosPorEdificio,getCupoPorPiso};
 
