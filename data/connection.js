@@ -44,7 +44,7 @@ async function runQuery(queryString) {
         host:  'localhost', //10.78.160.5
         database: 'turnosd',
         user: 'root', //turnos
-        password: 'password' // '142857' //'V8Rf4ZfbpS'
+        password: 'password' // 'password' // '142857' //'V8Rf4ZfbpS'
       });
 
     /*prod
@@ -55,13 +55,6 @@ async function runQuery(queryString) {
         password: 'V8Rf4ZfbpS' // password // '142857' //'V8Rf4ZfbpS'
       });
       */
-
-    /*var db = mysql.createConnection({
-        host: 'ClusterMySQL-TEST01.art.com',
-        database: 'turnosd',
-        user: 'turnos',
-        password: 'V8Rf4ZfbpS'
-    });*/
 
     var promesa = new Promise((resolve, reject) => 
     {

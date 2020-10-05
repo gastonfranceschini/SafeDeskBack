@@ -16,13 +16,13 @@ router.use(requireAuth);
 //GET /api/turnos - Todos los turnos
 router.get('/', async function(req, res, next) {
   let turnos = await dataTurnos.getTurnos();
-  res.send(turnos);
+  res.send(turnos[0]);
 });
 
 //GET /api/turnos/usuario/:id - Turnos por Usuario ID
 router.get('/usuario/:id', async (req, res, next)=>{
     let turno = await dataTurnos.getTurnosPorUsuario(req.params.id);
-    res.send(turno);
+    res.send(turno[0]);
 });
 
 //GET /api/turnos/:id - Turnos por ID
@@ -33,15 +33,14 @@ router.get('/:id', async (req, res, next)=>{
 
 //GET /api/turnos/gerencia/:gerenciaId/fecha/:fecha 
 router.get('/gerencia/:gerenciaId/fecha/:fecha', async (req, res, next)=>{
-    let cantidadTurnos = await dataTurnos.getCantidadTurnos(req.params.gerenciaId, req.params.fecha);
-    console.log ("cant: " + cantidadTurnos);
-    const resultado = {
-        gerencia: req.params.gerenciaId,
-        fecha: req.params.fecha,
-        cantidad: cantidadTurnos
-    }
-    console.log("RESULTADO CANT TURNOS: "+ JSON.stringify(resultado))
-    res.send(resultado);
+    let cantidadTurnos = await dataTurnos.getCupoTurnosPorEdificio(req.params.gerenciaId, req.params.fecha);
+    res.send(cantidadTurnos);
+});
+
+//GET /api/turnos/gerencia/:gerenciaId/fecha/:fecha/edificio/:IdEdificio
+router.get('/gerencia/:gerenciaId/fecha/:fecha/edificio/:IdEdificio', async (req, res, next)=>{
+    let cantidadTurnosPorPiso = await dataTurnos.getCupoPorPiso(req.params.gerenciaId, req.params.fecha, req.params.IdEdificio);
+    res.send(cantidadTurnosPorPiso);
 });
 
 //POST /api/turno
@@ -163,7 +162,6 @@ router.put('/:idTurno/usuario/:idUsuario', async (req, res, next)=>{
         res.send(fallido)
     }
 });
-
 
 // DELETE /api/turnos/:id
 router.delete('/:id', async (req, res, next)=>{
