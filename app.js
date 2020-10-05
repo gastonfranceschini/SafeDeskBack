@@ -49,8 +49,8 @@ var conexion = mysql.createConnection({
 
 // conexion.end();
 
-//const bcrypt = require('bcrypt');
-//console.log(bcrypt.hashSync("100", 10));
+const bcrypt = require('bcrypt');
+console.log(bcrypt.hashSync("100", 10));
 
 var indexRouter = require('./routes/index');
 
