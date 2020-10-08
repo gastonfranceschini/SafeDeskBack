@@ -50,78 +50,41 @@ router.post('/', async (req, res, next)=>{
     {
         return res.status(422).send({error: 'Fecha menor a la actual...'});
     }
-    
+    let turnoReservado = await dataTurnos.verificarReserva(req.body.idUsuario, req.body.fechaTurno)
+    if(turnoReservado > 1){
+        return res.status(422).send({error: 'Ya tiene turno reservado para ese día.'});
+    }
 
-    let turnoReservado = await dataTurnos.verificarReserva(req.body.usuarioId,req.body.gerenciaId, req.body.fechaActividad)
-    .then(
-        responseVerfificarReserva=> {
-            //console.log ("TURNO_RESERVADO: " + responseVerfificarReserva);
-            dataTurnos.getCantidadTurnos(req.body.gerenciaId, req.body.fechaActividad)
-            .then(
-                responseCantidadTurnos=> {
-                    //console.log ("CANTIDAD_TURNOS: " + responseCantidadTurnos);
-                    dataTurnos.getCupoActividad(req.body.gerenciaId)
-                    .then(
-                        responseCupoActividad=> {
-                            if (responseVerfificarReserva>0){
-                                console.log ("TURNO_RESERVADO: " + responseVerfificarReserva);
-                                //next(new Error(yaReservado))
-                                next (res.status(422).send({error: yaReservado}));
-                                //res.send(fallido)
-                            }else if(responseCantidadTurnos >= responseCupoActividad){
-                                console.log ("CANTIDAD_TURNOS: " + responseCantidadTurnos);
-                                console.log ("CUPO_ACTIVIDAD: " + responseCupoActividad);
-                                //next(new Error(cupoMaximoAlcanzado))
-                                next (res.status(422).send({error: cupoMaximoAlcanzado}));
-                                //res.send(fallido)
-                            }else{
-                                let nuevoTurno = {
-                                    _id: req.params.idTurno,
-                                    gerenciaId: ObjectId(req.body.gerenciaId),
-                                    usuarioId: ObjectId(req.body.usuarioId),
-                                    fechaActividad: req.body.fechaActividad,
-                                    fechaReserva: dateFormat(new Date(), "isoDateTime"),
-                                    asistencia: req.body.asistencia
-                                }
-        
-                                dataTurnos.pushTurno(nuevoTurno)
-                                .then(responsePushTurno =>
-                                    {
-                                        console.log("NUEVO TURNO: "+ JSON.stringify(nuevoTurno))
-                                        console.log("TURNO AGREGADO:" + resultado.result.n)
-                                        if(responsePushTurno.result.n==1){
-                                            res.send(satisfactorio)
-                                        }else{
-                                            res.send(fallido)
-                                            res.status(422).send({error: fallido});
-                                        }
-                                    })
-                                    .catch(err => 
-                                        {
-                                            res.status(422).send({error: fallido});
-                                    })
-                                    }           
-                    })
-                    .catch(err => 
-                        {
-                            next(res.status(422).send({error: fallido}));
-                            //next(new Error(fallido))
-                            //res.send(fallido)
-                    })
-            })
-            .catch(err => 
-                {
-                    next(res.status(422).send({error: fallido}));
-                    //next(new Error(fallido))
-                    //res.send(fallido)
-            })
-        })
-    .catch(err => 
-        {
-            next(res.status(422).send({error: fallido}));
-            //next(new Error(fallido))
-            //res.send(fallido)
-    })  
+    let cupo = await dataTurnos.getCupoPorPisoEspecifico(req.body.IdGerencia, req.body.fechaTurno, req.body.IdEdificio, req.body.IdPiso)  
+    if(cupo <= 0){
+        return res.status(422).send({error: 'No quedan cupos para el piso seleccionado en esta fecha.'});
+    }
+
+    let horarioEntrada = await dataTurnos.getCupoPorHorarioEntradaEspecifico(req.body.fechaTurno, req.body.IdEdificio, req.body.IdHorario)  
+    if(horarioEntrada <= 0){
+        return res.status(422).send({error: 'No quedan cupos para entrar a ese horario.'});
+    }
+
+    let idPisoxGerencia = await dataTurnos.getPisoxGerencia(req.user.IdGerencia, req.body.IdPiso)  
+    if(idPisoxGerencia == 0){
+        return res.status(422).send({error: 'No existe esta combinación de gerencias y pisos.'});
+    }
+
+    // VALUES(${turno.idUsuario}, ${turno.idUsuarioPedido}, NOW(), '${turno.fechaTurno}', ${turno.idHorarioEntrada}, ${turno.idPisoxGerencia})`)
+
+    let nuevoTurno = {              
+                        idUsuario: req.body.idUsuario,
+                        idUsuarioPedido: req.user.DNI,
+                        fechaTurno: req.body.fechaTurno,
+                        idHorarioEntrada: req.body.IdHorario,
+                        idPisoxGerencia: idPisoxGerencia
+                      }
+
+    console.log(nuevoTurno)
+
+    let turno = await dataTurnos.pushTurno(nuevoTurno)
+
+    return res.status(200).send({error: 'Turno creado.'});
 });
 
 //PUT /api/turnos/:idTurno/usurio/:idUsuario
@@ -162,7 +125,7 @@ router.put('/:idTurno/usuario/:idUsuario', async (req, res, next)=>{
         res.send(fallido)
     }
 });
-
+ 
 // DELETE /api/turnos/:id
 router.delete('/:id', async (req, res, next)=>{
     let resultado = await dataTurnos.deleteTurno(req.params.id)

@@ -34,6 +34,23 @@ async function getCupoPorHorarioEntrada(fechaTurno,IdEdificio){
     return horariosEntrada
 }
 
+// cupo x horario de entrada endpoint EDIFICIO
+async function getCupoPorHorarioEntradaEspecifico(fechaTurno,IdEdificio, IdHorario){
+    const horariosEntrada = await 
+      connection.runQuery(`select  he.cupo - (select count(*) from turnos t
+                inner join  pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+                INNER JOIN pisos p ON p.Id = pxg.IdPiso
+                INNER JOIN edificios e ON e.Id = p.IdEdificio
+                where IdHorarioEntrada = he.id
+                and IdEdificio = he.IdEdificio
+                and t.FechaTurno = '${fechaTurno}') as Cupo,
+        he.id, he.horario
+        from horariosentrada he
+        where he.IdEdificio = ${IdEdificio}
+        and Cupo > 0
+        and he.id = ${IdHorario}`)
+    return horariosEntrada[0].Cupo
+}
 
 // cupo x fecha endpoint EDIFICIO
 async function getCupoTurnosPorEdificio(IdGerencia, fechaTurno){
@@ -52,7 +69,7 @@ async function getCupoTurnosPorEdificio(IdGerencia, fechaTurno){
     return cupoTurnosPorEdificio
 }
 
-//cupo x piso para fecha endpoint Piso x Edificio x Gerencia
+//cupoS x pisoS para fecha endpoint Piso x Edificio x Gerencia
 async function getCupoPorPiso(IdGerencia, fechaTurno, IdEdificio){
     const cupoTurnosPorPiso = await 
       connection.runQuery(`SELECT SUM(pxg.Cupo - (SELECT  COUNT(*) 
@@ -69,29 +86,54 @@ async function getCupoPorPiso(IdGerencia, fechaTurno, IdEdificio){
     return cupoTurnosPorPiso
 }
 
-async function verificarReserva(usuarioId, actividadId, fechaActividad){
-    let o_aid = new ObjectId(actividadId); 
-    let o_uid = new ObjectId(usuarioId); 
-    const clientmongo = await connection.getConnection();
-    const cant = await clientmongo.db("safe_distance")
-        .collection("turnos")
-        .find(
-            { 
-                "usuarioId": o_uid,
-                "actividadId": o_aid ,
-                "fechaActividad" : fechaActividad
-        }
-        )
-        .count();
-    return cant;
+//cupoS x pisoS para fecha endpoint Piso x Edificio x Gerencia
+async function getCupoPorPisoEspecifico(IdGerencia, fechaTurno, IdEdificio, IdPiso){
+    const cupoTurnosPorPiso = await 
+      connection.runQuery(`SELECT SUM(pxg.Cupo - (SELECT  COUNT(*) 
+                                                    FROM turnos t 
+                                                    WHERE t.FechaTurno = '${fechaTurno}' 
+                                                    AND t.IdPisoXGerencia = pxg.Id )) as Cupo,
+                                  p.Id as pID, p.Nombre, p.Numero
+                          FROM pisosxgerencias pxg
+                          INNER JOIN pisos p ON p.Id = pxg.IdPiso
+                          WHERE 	pxg.IdGerencia = ${IdGerencia} 
+                          AND p.IdEdificio = ${IdEdificio} 
+                          AND p.Id = ${IdPiso} 
+                          GROUP BY pID, p.Nombre, p.Numero
+                          HAVING Cupo > 0`)
+
+    return cupoTurnosPorPiso[0].Cupo
+}
+
+async function getPisoxGerencia(IdGerencia, IdPiso){
+    const pisoxGerencia = await 
+      connection.runQuery(`SELECT Id
+                            FROM pisosxgerencias
+                            WHERE 	IdGerencia = ${IdGerencia}
+                              AND IdPiso = ${IdPiso}`)
+
+    return pisoxGerencia[0].Id
 }
 
 async function pushTurno(turno){
-    const clientmongo = await connection.getConnection();
-    const result = await clientmongo.db("safe_distance")
-        .collection("turnos")
-        .insertOne(turno)
-    return result;
+    const turnoReservado = await 
+      connection.runQuery(`INSERT INTO 
+                            turnos(IdUsuario, IdUsuarioPedido, FechaCreacion, FechaTurno, IdHorarioEntrada, IdPisoXGerencia)
+                            VALUES(${turno.idUsuario}, ${turno.idUsuarioPedido}, NOW(), '${turno.fechaTurno}', ${turno.idHorarioEntrada}, ${turno.idPisoxGerencia})`)
+    return turnoReservado
+}
+
+async function verificarReserva(usuarioId, fechaTurno){
+    console.log(`SELECT COUNT(IdUsuario) count
+                            FROM turnos 
+                            WHERE IdUsuario = ${usuarioId} 
+                            AND FechaTurno = '${fechaTurno}'`)
+    const confirmarReservado = await 
+      connection.runQuery(`SELECT COUNT(IdUsuario) count
+                            FROM turnos 
+                            WHERE IdUsuario = ${usuarioId} 
+                            AND FechaTurno = '${fechaTurno}'`)
+    return confirmarReservado[0].count
 }
 
 async function updateTurno(turno){
@@ -124,6 +166,6 @@ async function deleteTurno(turnoId){
     return result;
 }
 
-module.exports = {getCupoPorHorarioEntrada,verificarReserva, getTurnos, getTurnoPorId, 
-    updateTurno, pushTurno, deleteTurno, getTurnosPorUsuario,getCupoTurnosPorEdificio,getCupoPorPiso};
+module.exports = {getCupoPorHorarioEntrada, getCupoPorHorarioEntradaEspecifico, verificarReserva, getTurnos, getTurnoPorId, 
+    updateTurno, pushTurno, deleteTurno, getTurnosPorUsuario,getCupoTurnosPorEdificio,getCupoPorPiso, getCupoPorPisoEspecifico, getPisoxGerencia};
 
