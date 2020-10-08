@@ -44,7 +44,7 @@ async function runQuery(queryString) {
         host:  'localhost', //10.78.160.5
         database: 'turnosd',
         user: 'root', //turnos
-        password: 'password' // 'password' // '142857' //'V8Rf4ZfbpS'
+        password: '142857' // 'password' // '142857' //'V8Rf4ZfbpS'
       });
 
     /*prod
