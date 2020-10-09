@@ -37,6 +37,14 @@ router.get('/gerencia/:gerenciaId/fecha/:fecha', async (req, res, next)=>{
     res.send(cantidadTurnos);
 });
 
+//getCupoPorHorarioEntrada(fechaTurno,IdEdificio) 
+//GET api/turnos/:idEdificio/HorariosDeEntrada
+router.get('/:idEdificio/HorariosDeEntrada', async (req, res, next)=>{
+    let horarios = await dataEdificios.getCupoPorHorarioEntrada(req.user.IdGerencia,req.param.idEdificio)
+    res.send(horarios)
+  });
+  
+
 //GET /api/turnos/gerencia/:gerenciaId/fecha/:fecha/edificio/:IdEdificio
 router.get('/gerencia/:gerenciaId/fecha/:fecha/edificio/:IdEdificio', async (req, res, next)=>{
     let cantidadTurnosPorPiso = await dataTurnos.getCupoPorPiso(req.params.gerenciaId, req.params.fecha, req.params.IdEdificio);
