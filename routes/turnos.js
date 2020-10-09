@@ -45,18 +45,20 @@ router.get('/gerencia/:gerenciaId/fecha/:fecha/edificio/:IdEdificio', async (req
 
 //POST /api/turno
 router.post('/', async (req, res, next)=>{
+
+
      //verifico que no sea en fecha pasada
-    if (new Date(req.body.fechaActividad) < new Date()) 
+    if (new Date(req.body.fechaTurno) < new Date()) 
     {
         return res.status(422).send({error: 'Fecha menor a la actual...'});
     }
     let turnoReservado = await dataTurnos.verificarReserva(req.body.idUsuario, req.body.fechaTurno)
-    if(turnoReservado > 1){
+    if(turnoReservado > 0){
         return res.status(422).send({error: 'Ya tiene turno reservado para ese día.'});
     }
 
     let cupo = await dataTurnos.getCupoPorPisoEspecifico(req.body.IdGerencia, req.body.fechaTurno, req.body.IdEdificio, req.body.IdPiso)  
-    if(cupo <= 0){
+    if(cupo <= 0 || cupo == undefined){
         return res.status(422).send({error: 'No quedan cupos para el piso seleccionado en esta fecha.'});
     }
 
@@ -70,8 +72,6 @@ router.post('/', async (req, res, next)=>{
         return res.status(422).send({error: 'No existe esta combinación de gerencias y pisos.'});
     }
 
-    // VALUES(${turno.idUsuario}, ${turno.idUsuarioPedido}, NOW(), '${turno.fechaTurno}', ${turno.idHorarioEntrada}, ${turno.idPisoxGerencia})`)
-
     let nuevoTurno = {              
                         idUsuario: req.body.idUsuario,
                         idUsuarioPedido: req.user.DNI,
@@ -80,11 +80,9 @@ router.post('/', async (req, res, next)=>{
                         idPisoxGerencia: idPisoxGerencia
                       }
 
-    console.log(nuevoTurno)
-
     let turno = await dataTurnos.pushTurno(nuevoTurno)
 
-    return res.status(200).send({error: 'Turno creado.'});
+    return res.status(200).send({Message: 'Turno creado.'});
 });
 
 //PUT /api/turnos/:idTurno/usurio/:idUsuario
