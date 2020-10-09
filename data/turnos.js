@@ -29,8 +29,7 @@ async function getCupoPorHorarioEntrada(fechaTurno,IdEdificio){
                 and t.FechaTurno = '${fechaTurno}') as Cupo,
         he.id, he.horario
         from horariosentrada he
-        where he.IdEdificio = ${IdEdificio}
-        and Cupo > 0`)
+        where he.IdEdificio = ${IdEdificio}`)
     return horariosEntrada
 }
 
@@ -99,9 +98,7 @@ async function getCupoPorPisoEspecifico(IdGerencia, fechaTurno, IdEdificio, IdPi
                           WHERE 	pxg.IdGerencia = ${IdGerencia} 
                           AND p.IdEdificio = ${IdEdificio} 
                           AND p.Id = ${IdPiso} 
-                          GROUP BY pID, p.Nombre, p.Numero
-                          HAVING Cupo > 0`)
-
+                          GROUP BY pID, p.Nombre, p.Numero`)
     return cupoTurnosPorPiso[0].Cupo
 }
 
@@ -124,10 +121,6 @@ async function pushTurno(turno){
 }
 
 async function verificarReserva(usuarioId, fechaTurno){
-    console.log(`SELECT COUNT(IdUsuario) count
-                            FROM turnos 
-                            WHERE IdUsuario = ${usuarioId} 
-                            AND FechaTurno = '${fechaTurno}'`)
     const confirmarReservado = await 
       connection.runQuery(`SELECT COUNT(IdUsuario) count
                             FROM turnos 
