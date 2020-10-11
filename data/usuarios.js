@@ -7,7 +7,7 @@ const T_ADMINISTRADOR = 4;
 const T_SEGURIDAD = 5;
 
 async function getUsuarios(){
-    const rest = await connection.runQuery('SELECT * FROM Usuarios')
+    const rest = await connection.runQuery('SELECT * FROM usuarios')
     return rest
 }
 
@@ -17,17 +17,17 @@ async function getUsuariosDependientes(usuario){
 
     if (usuario.IdTipoDeUsuario == T_OPERADOR || usuario.IdTipoDeUsuario == T_SUPERVISOR)
     {
-        query = 'select dni,nombre from usuarios where ' /
-        'IdJefeDirecto = "' + usuario.DNI  + '" or DNI = "' + usuario.DNI  + '"';
+        query = `select dni,nombre from usuarios where 
+        IdJefeDirecto = ` + usuario.DNI + ` or DNI = ` + usuario.DNI;
     }
     else if (usuario.IdTipoDeUsuario == T_GERENTE)
     {
-        query = 'select dni,nombre from usuarios where ' /
-        'IdGerencia = ' + usuario.IdGerencia;
+        query = `select dni,nombre from usuarios where 
+        IdGerencia = ` + usuario.IdGerencia;
     }
     else
     {
-        query = 'select dni,nombre from usuarios';
+        query = `select dni,nombre from usuarios`;
     }
 
     const rest = await connection.runQuery(query);
@@ -36,13 +36,13 @@ async function getUsuariosDependientes(usuario){
 
 async function getUsuarioPorDNI(dni){
     const user = await connection
-          .runQuery(`SELECT * FROM Usuarios where DNI = "${dni}"`)
+          .runQuery(`SELECT * FROM usuarios where DNI = "${dni}"`)
     return user
 }
 
 async function getUsuarioPorEmail(email){
     const user = await connection
-          .runQuery(`SELECT * FROM Usuarios where Email = "${email}"`)
+          .runQuery(`SELECT * FROM usuarios where Email = "${email}"`)
     return user
 }
 

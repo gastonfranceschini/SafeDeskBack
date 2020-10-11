@@ -25,15 +25,27 @@ router.get('/usuario/:id', async (req, res, next)=>{
     res.send(turno[0]);
 });
 
+//GET /api/turnos/misturnos - mis turnos
+router.get('/misturnos', async (req, res, next)=>{
+    let turnos = await dataTurnos.getTurnosDetallesPorUsuario(req.user.DNI);
+    res.send(turnos);
+});
+
+//GET /api/turnos/misturnoshistorico - mis turnos pasados
+router.get('/misturnoshistorico', async (req, res, next)=>{
+    let turnos = await dataTurnos.getTurnosDetallesHistoricoPorUsuario(req.user.DNI);
+    res.send(turnos);
+});
+
 //GET /api/turnos/:id - Turnos por ID
 router.get('/:id', async (req, res, next)=>{
     let turno = await dataTurnos.getTurnoPorId(req.params.id);
     res.send(turno);
 });
 
-//GET /api/turnos/gerencia/:gerenciaId/fecha/:fecha 
-router.get('/gerencia/:gerenciaId/fecha/:fecha', async (req, res, next)=>{
-    let cantidadTurnos = await dataTurnos.getCupoTurnosPorEdificio(req.params.gerenciaId, req.params.fecha);
+//GET /api/turnos/edificios/fecha/:fecha 
+router.get('/edificios/fecha/:fecha', async (req, res, next)=>{
+    let cantidadTurnos = await dataTurnos.getCupoTurnosPorEdificio(req.user.IdGerencia, req.params.fecha);
     res.send(cantidadTurnos);
 });
 
@@ -45,9 +57,9 @@ router.get('/:idEdificio/HorariosDeEntrada', async (req, res, next)=>{
   });
   
 
-//GET /api/turnos/gerencia/:gerenciaId/fecha/:fecha/edificio/:IdEdificio
-router.get('/gerencia/:gerenciaId/fecha/:fecha/edificio/:IdEdificio', async (req, res, next)=>{
-    let cantidadTurnosPorPiso = await dataTurnos.getCupoPorPiso(req.params.gerenciaId, req.params.fecha, req.params.IdEdificio);
+//GET /api/turnos/pisos/fecha/:fecha/edificio/:IdEdificio
+router.get('/pisos/fecha/:fecha/edificio/:IdEdificio', async (req, res, next)=>{
+    let cantidadTurnosPorPiso = await dataTurnos.getCupoPorPiso(req.user.IdGerencia, req.params.fecha, req.params.IdEdificio);
     res.send(cantidadTurnosPorPiso);
 });
 

@@ -11,8 +11,16 @@ router.use(requireAuth);
 
 // GET /api/usuarios/dependientes
 router.get('/dependientes', async function(req, res, next) {
-  let usuarios = await dataUsuarios.getUsuariosDependientes(req.user);
-  res.send(usuarios);
+  try
+  {
+    console.log(req.user);
+    let usuarios = await dataUsuarios.getUsuariosDependientes(req.user);
+    res.send(usuarios);
+  }
+  catch ({ message }) 
+  {
+    return res.status(422).send({error: 'Error al procesar la informacion: ' + message });
+  }
 });
 
 // GET /api/usuarios/diagnostico

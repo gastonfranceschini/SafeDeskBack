@@ -17,6 +17,35 @@ async function getTurnoPorId(turnoId){
 }
 
 
+async function getTurnosDetallesPorUsuario(usuarioId){
+    const rest = await connection
+    .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
+    from turnos t
+    inner join pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+    INNER JOIN pisos p ON p.Id = pxg.IdPiso
+    INNER JOIN edificios e ON e.Id = p.IdEdificio
+    left join horariosentrada he on he.id = IdHorarioEntrada
+    where FechaTurno > now()
+    and IdUsuario = ${usuarioId}`)
+    return rest
+}
+
+async function getTurnosDetallesHistoricoPorUsuario(usuarioId){
+    const rest = await connection
+    .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
+    from turnos t
+    inner join pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+    INNER JOIN pisos p ON p.Id = pxg.IdPiso
+    INNER JOIN edificios e ON e.Id = p.IdEdificio
+    left join horariosentrada he on he.id = IdHorarioEntrada
+    where FechaTurno < now()
+    and IdUsuario = ${usuarioId}`)
+    return rest
+}
+
+
+
+
 // cupo x horario de entrada endpoint EDIFICIO
 async function getCupoPorHorarioEntrada(fechaTurno,IdEdificio){
     const horariosEntrada = await 
@@ -95,7 +124,7 @@ async function getCupoPorPisoEspecifico(IdGerencia, fechaTurno, IdEdificio, IdPi
                                   p.Id as pID, p.Nombre, p.Numero
                           FROM pisosxgerencias pxg
                           INNER JOIN pisos p ON p.Id = pxg.IdPiso
-                          WHERE 	pxg.IdGerencia = ${IdGerencia} 
+                          WHERE pxg.IdGerencia = ${IdGerencia} 
                           AND p.IdEdificio = ${IdEdificio} 
                           AND p.Id = ${IdPiso} 
                           GROUP BY pID, p.Nombre, p.Numero`)
@@ -159,6 +188,6 @@ async function deleteTurno(turnoId){
     return result;
 }
 
-module.exports = {getCupoPorHorarioEntrada, getCupoPorHorarioEntradaEspecifico, verificarReserva, getTurnos, getTurnoPorId, 
+module.exports = {getTurnosDetallesPorUsuario,getTurnosDetallesHistoricoPorUsuario,getCupoPorHorarioEntrada, getCupoPorHorarioEntradaEspecifico, verificarReserva, getTurnos, getTurnoPorId, 
     updateTurno, pushTurno, deleteTurno, getTurnosPorUsuario,getCupoTurnosPorEdificio,getCupoPorPiso, getCupoPorPisoEspecifico, getPisoxGerencia};
 
