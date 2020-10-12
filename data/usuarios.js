@@ -82,22 +82,11 @@ async function updateUsuarioPassword(usuario){
     return user
 }
 
-module.exports = {getUsuarios, getUsuarioPorDNI, getUsuarioPorEmail,updateUsuarioPassword,updateUsuario,getUsuariosDependientes}
-
-
-
-// async function checkUsuario(usuarioEmail){
-//     const clientmongo = await connection.getConnection();
-//     const doc = await clientmongo.db("safe_distance")
-//         .collection("usuarios")
-//         .findOne({email: usuarioEmail});
-//     return doc;
-// }
-
-// async function pushUsuario(usuario){
-//     const clientmongo = await connection.getConnection();
-//     const result = await clientmongo.db("safe_distance")
-//         .collection("usuarios")
-//         .insertOne(usuario);
-//     return result;
-// }
+module.exports = {
+  getUsuarios, 
+  getUsuarioPorDNI, 
+  getUsuarioPorEmail,
+  updateUsuarioPassword,
+  updateUsuario,
+  getUsuariosDependientes
+}

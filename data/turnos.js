@@ -159,6 +159,16 @@ async function deleteTurno(turnoId){
     return result;
 }
 
-module.exports = {getCupoPorHorarioEntrada, getCupoPorHorarioEntradaEspecifico, verificarReserva, getTurnos, getTurnoPorId, 
-    updateTurno, pushTurno, deleteTurno, getTurnosPorUsuario,getCupoTurnosPorEdificio,getCupoPorPiso, getCupoPorPisoEspecifico, getPisoxGerencia};
-
+module.exports = {
+  getTurnos, 
+  getTurnoPorId, 
+  getCupoPorHorarioEntrada,
+  updateTurno, 
+  pushTurno, 
+  deleteTurno, 
+  getTurnosPorUsuario,
+  getCupoTurnosPorEdificio,
+  getCupoPorPiso, 
+  getCupoPorPisoEspecifico, 
+  getPisoxGerencia
+}

@@ -15,12 +15,6 @@ router.get('/dependientes', async function(req, res, next) {
   res.send(usuarios);
 });
 
-// GET /api/usuarios/diagnostico
-/*router.post('/diagnostico', async function(req, res, next) {
-  let usuarios = await dataUsuarios.pushDiagnonitico(req.user,req.body);
-  res.send(usuarios);
-});*/
-
 // GET /api/usuarios
 router.get('/', async function(req, res, next) {
   let usuarios = await dataUsuarios.getUsuarios();

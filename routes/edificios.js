@@ -25,10 +25,3 @@ router.post('/id', async (req, res, next)=>{
 });
 
 module.exports = router;
-
-
-//GET api/edificios/usuario/:id
-// router.get('/usuario/:id', async (req, res, next)=>{
-//     let edificios = await dataEdificios.getEdificiosPorUsuario(req.params.id);
-//     res.send(edificios);
-// });

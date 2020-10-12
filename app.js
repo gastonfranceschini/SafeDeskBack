@@ -52,19 +52,13 @@ var conexion = mysql.createConnection({
 const bcrypt = require('bcrypt');
 console.log(bcrypt.hashSync("100", 10));
 
-var indexRouter = require('./routes/index');
-
+let indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const authLoggedRouter = require('./routes/authLogged');
-
 const usuariosRouter = require('./routes/usuarios');
 const edificiosRouter = require('./routes/edificios');
-
-
-const actividadesRouter = require('./routes/actividades');
-const ciudadesRouter = require('./routes/ciudades');
 const turnosRouter = require('./routes/turnos');
-const barriosRouter = require('./routes/barrios');
+const diagnosticosRouter = require('./routes/diagnosticos');
 
 var app = express();
 
@@ -77,18 +71,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-//app.use(passport.initialize());
-//app.use(passport.session());
-
-//app.use(bodyParser.json());
 
 app.use('/', indexRouter);
 app.use('/api/usuarios', usuariosRouter);
-app.use('/api/actividades', actividadesRouter);
-app.use('/api/ciudades', ciudadesRouter);
 app.use('/api/turnos', turnosRouter);
-app.use('/api/barrios', barriosRouter);
 app.use('/api/edificios', edificiosRouter);
+app.use('/api/diagnosticos', diagnosticosRouter);
+
+
 //rutas login
 app.use('/api/logged',authLoggedRouter);
 app.use('/api/auth',authRouter);
