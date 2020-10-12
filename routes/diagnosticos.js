@@ -11,8 +11,8 @@ router.get('/', async (req, res, next)=>{
     res.send(diagnosticos);
 });
 
-//POST - api/diagnosticos/grabar
-router.post('/grabar', async (req, res, next)=>{
+//POST - api/diagnosticos
+router.post('/', async (req, res, next)=>{
     let diagnosticos = await dataDiagnosticos.grabarDiagnosticos(req.user.DNI, req.body.Temperatura, req.body.PerdioGusto, req.body.ContactoCercano, req.body.EstoyEmbarazada, req.body.Cancer, req.body.Diabetes, req.body.Hepatica, req.body.PerdioOlfato, req.body.DolorGarganta, req.body.DificultadRespiratoria);
     res.send(diagnosticos);
 });
