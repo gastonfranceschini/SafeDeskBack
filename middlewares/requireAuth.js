@@ -18,6 +18,9 @@ module.exports = (req, res, next) => {
 
     const { userId } = payload;
     const usuario = await dataUsuarios.getUsuarioPorDNI(userId);
+
+    console.log(userId);
+
     req.user = usuario[0];
     next();
   });

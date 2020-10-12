@@ -6,51 +6,8 @@ var logger = require('morgan');
 var passport = require('passport'); // Passport: Middleware de Node que facilita la autenticación de usuarios
 var mysql = require('mysql');
 
-
-// Conexión Remota
-// var conexion = mysql.createConnection({
-//   host: 'ClusterMySQL-TEST01.art.com',
-//   database: 'turnosd',
-//   user: 'turnos',
-//   password: 'V8Rf4ZfbpS'
-// });
-
-//conexion local
-var conexion = mysql.createConnection({
-  host: 'localhost',
-  database: 'turnosd',
-  user: 'root',
-  password: '142857'
-});
-
-// conexion.connect(function(error){
-//   if (error)
-//   { 
-//     throw error;
-//   }
-//   else
-//   {
-//     console.log('Conexion Exitosa!')
-//   }
-// });
-
-// conexion.query("SELECT * FROM Usuarios", 
-//   function(error,results, fields){
-//     if(error){
-//       throw error;
-//     }
-//     else {
-//       results.forEach(result => {
-//         console.log(result);
-//       })
-//     }
-//   }
-// );
-
-// conexion.end();
-
-const bcrypt = require('bcrypt');
-console.log(bcrypt.hashSync("100", 10));
+//const bcrypt = require('bcrypt');
+//console.log(bcrypt.hashSync("100", 10));
 
 let indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
