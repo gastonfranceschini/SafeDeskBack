@@ -18,7 +18,7 @@ npm-debug.*
 *.orig.*
 web-build/
 web-report/
-# *.env
+*.env
 # macOS
 .DS_Store
 
@@ -86,8 +86,8 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-#.env
-#.env.test
+.env
+.env.test
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
