@@ -12,7 +12,14 @@ async function getTurnosPorUsuario(usuarioId){
 }
 
 async function getTurnoPorId(turnoId){
-    const rest = await connection.runQuery(`SELECT * FROM turnos WHERE Id = ${turnoId}`)
+    const rest = await connection
+    .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
+    from turnos t
+    inner join pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+    INNER JOIN pisos p ON p.Id = pxg.IdPiso
+    INNER JOIN edificios e ON e.Id = p.IdEdificio
+    left join horariosentrada he on he.id = IdHorarioEntrada
+    where t.Id = ${turnoId}`)
     return rest
 }
 

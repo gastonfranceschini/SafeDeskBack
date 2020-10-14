@@ -50,9 +50,9 @@ router.get('/edificios/fecha/:fecha', async (req, res, next)=>{
 });
 
 //getCupoPorHorarioEntrada(fechaTurno,IdEdificio) 
-//GET api/turnos/:idEdificio/HorariosDeEntrada
-router.get('/:idEdificio/HorariosDeEntrada', async (req, res, next)=>{
-    let horarios = await dataEdificios.getCupoPorHorarioEntrada(req.user.IdGerencia,req.param.idEdificio)
+//GET api/turnos/edificio/:idEdificio/fecha/:fecha/HorariosDeEntrada
+router.get('/edificio/:idEdificio/fecha/:fecha/HorariosDeEntrada', async (req, res, next)=>{
+    let horarios = await dataEdificios.getCupoPorHorarioEntrada(req.params.fecha,req.params.idEdificio)
     res.send(horarios)
   });
   
