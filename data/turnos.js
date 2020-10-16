@@ -196,6 +196,8 @@ async function deleteTurno(turnoId){
 }
 
 module.exports = {
+    verificarReserva,
+    getCupoPorHorarioEntradaEspecifico,
   getTurnosDetallesHistoricoPorUsuario,
   getTurnosDetallesPorUsuario,
   getTurnos, 

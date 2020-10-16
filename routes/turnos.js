@@ -13,96 +13,181 @@ const cupoMaximoAlcanzado = 'Ya se ha alcanzado el cupo maximo'
 
 router.use(requireAuth);
 
-//GET /api/turnos - Todos los turnos
-router.get('/', async function(req, res, next) {
-  let turnos = await dataTurnos.getTurnos();
-  res.send(turnos[0]);
-});
 
 //GET /api/turnos/usuario/:id - Turnos por Usuario ID
 router.get('/usuario/:id', async (req, res, next)=>{
-    let turno = await dataTurnos.getTurnosPorUsuario(req.params.id);
-    res.send(turno[0]);
+
+    try
+    {
+        let turno = await dataTurnos.getTurnosPorUsuario(req.params.id);
+        res.send(turno[0]);
+    }
+    catch ({ message }) 
+    {
+      return res.status(422).send({error: '/usuario/:id - Error al procesar la informacion: ' + message });
+    }
+
 });
 
 //GET /api/turnos/misturnos - mis turnos
 router.get('/misturnos', async (req, res, next)=>{
-    let turnos = await dataTurnos.getTurnosDetallesPorUsuario(req.user.DNI);
-    res.send(turnos);
+
+    try
+    {
+        let turnos = await dataTurnos.getTurnosDetallesPorUsuario(req.user.DNI);
+        res.send(turnos);
+    }
+    catch ({ message }) 
+    {
+      return res.status(422).send({error: '/misturnos - Error al procesar la informacion: ' + message });
+    }
 });
 
 //GET /api/turnos/misturnoshistorico - mis turnos pasados
 router.get('/misturnoshistorico', async (req, res, next)=>{
-    let turnos = await dataTurnos.getTurnosDetallesHistoricoPorUsuario(req.user.DNI);
-    res.send(turnos);
+
+    try
+    {
+        let turnos = await dataTurnos.getTurnosDetallesHistoricoPorUsuario(req.user.DNI);
+        res.send(turnos);
+    }
+    catch ({ message }) 
+    {
+      return res.status(422).send({error: '/misturnoshistorico - Error al procesar la informacion: ' + message });
+    }
+
 });
 
-//GET /api/turnos/:id - Turnos por ID
-router.get('/:id', async (req, res, next)=>{
-    let turno = await dataTurnos.getTurnoPorId(req.params.id);
-    res.send(turno);
-});
 
 //GET /api/turnos/edificios/fecha/:fecha 
 router.get('/edificios/fecha/:fecha', async (req, res, next)=>{
-    let cantidadTurnos = await dataTurnos.getCupoTurnosPorEdificio(req.user.IdGerencia, req.params.fecha);
-    res.send(cantidadTurnos);
+
+    try
+    {
+        let cantidadTurnos = await dataTurnos.getCupoTurnosPorEdificio(req.user.IdGerencia, req.params.fecha);
+        res.send(cantidadTurnos);
+    }
+    catch ({ message }) 
+    {
+      return res.status(422).send({error: '/edificios/fecha/:fecha - Error al procesar la informacion: ' + message });
+    }
+
 });
 
+   
 //getCupoPorHorarioEntrada(fechaTurno,IdEdificio) 
 //GET api/turnos/edificio/:idEdificio/fecha/:fecha/HorariosDeEntrada
 router.get('/edificio/:idEdificio/fecha/:fecha/HorariosDeEntrada', async (req, res, next)=>{
-    let horarios = await dataEdificios.getCupoPorHorarioEntrada(req.params.fecha,req.params.idEdificio)
-    res.send(horarios)
+
+    try
+    {
+        let horarios = await dataTurnos.getCupoPorHorarioEntrada(req.params.fecha,req.params.idEdificio)
+        res.send(horarios)
+    }
+    catch ({ message }) 
+    {
+      return res.status(422).send({error: '/edificio/:idEdificio/fecha/:fecha/HorariosDeEntrada - Error al procesar la informacion: ' + message });
+    }
   });
   
 
 //GET /api/turnos/pisos/fecha/:fecha/edificio/:IdEdificio
 router.get('/pisos/fecha/:fecha/edificio/:IdEdificio', async (req, res, next)=>{
-    let cantidadTurnosPorPiso = await dataTurnos.getCupoPorPiso(req.user.IdGerencia, req.params.fecha, req.params.IdEdificio);
-    res.send(cantidadTurnosPorPiso);
+
+    
+    try
+    {
+        let cantidadTurnosPorPiso = await dataTurnos.getCupoPorPiso(req.user.IdGerencia, req.params.fecha, req.params.IdEdificio);
+        res.send(cantidadTurnosPorPiso);
+    }
+    catch ({ message }) 
+    {
+      return res.status(422).send({error: '/pisos/fecha/:fecha/edificio/:IdEdificio - Error al procesar la informacion: ' + message });
+    }
+
 });
+
+//GET /api/turnos/:id - Turnos por ID
+router.get('/:id', async (req, res, next)=>{
+
+    try
+    {
+        let turno = await dataTurnos.getTurnoPorId(req.params.id);
+        res.send(turno);
+    }
+    catch ({ message }) 
+    {
+      return res.status(422).send({error: '/:id - Error al procesar la informacion: ' + message });
+    }
+
+
+});
+
+//GET /api/turnos - Todos los turnos
+router.get('/', async function(req, res, next) {
+
+    try
+    {
+        let turnos = await dataTurnos.getTurnos();
+        res.send(turnos[0]);
+    }
+    catch ({ message }) 
+    {
+      return res.status(422).send({error: '/ - Error al procesar la informacion: ' + message });
+    }
+
+  });
 
 //POST /api/turno
 router.post('/', async (req, res, next)=>{
 
-
-     //verifico que no sea en fecha pasada
-    if (new Date(req.body.fechaTurno) < new Date()) 
+    try
     {
-        return res.status(422).send({error: 'Fecha menor a la actual...'});
+        //verifico que no sea en fecha pasada
+        if (new Date(req.body.fechaTurno) < new Date()) 
+        {
+            return res.status(422).send({error: 'Fecha menor a la actual...'});
+        }
+
+        let turnoReservado = await dataTurnos.verificarReserva(req.body.idUsuario, req.body.fechaTurno)
+        if(turnoReservado > 0){
+            return res.status(422).send({error: 'Ya tiene turno reservado para ese día.'});
+        }
+
+        let cupo = await dataTurnos.getCupoPorPisoEspecifico(req.user.IdGerencia, req.body.fechaTurno, req.body.IdEdificio, req.body.IdPiso)  
+        
+        if(cupo <= 0){
+            return res.status(422).send({error: 'No quedan cupos para el piso seleccionado en esta fecha.'});
+        }
+        
+        let horarioEntrada = await dataTurnos.getCupoPorHorarioEntradaEspecifico(req.body.fechaTurno, req.body.IdEdificio, req.body.idHorarioEntrada)  
+        if(horarioEntrada <= 0){
+            return res.status(422).send({error: 'No quedan cupos para entrar a ese horario.'});
+        }
+        
+
+        let idPisoxGerencia = await dataTurnos.getPisoxGerencia(req.user.IdGerencia, req.body.IdPiso)  
+        if(idPisoxGerencia == 0){
+            return res.status(422).send({error: 'No existe esta combinación de gerencias y pisos.'});
+        }
+    
+
+        let nuevoTurno = {              
+                            idUsuario: req.body.idUsuario,
+                            idUsuarioPedido: req.user.DNI,
+                            fechaTurno: req.body.fechaTurno,
+                            idHorarioEntrada: req.body.idHorarioEntrada,
+                            idPisoxGerencia: idPisoxGerencia
+                        }
+
+        let turno = await dataTurnos.pushTurno(nuevoTurno)
+
+        return res.status(200).send({Message: 'Turno creado!'});
     }
-    let turnoReservado = await dataTurnos.verificarReserva(req.body.idUsuario, req.body.fechaTurno)
-    if(turnoReservado > 0){
-        return res.status(422).send({error: 'Ya tiene turno reservado para ese día.'});
+    catch ({ message }) 
+    {
+        return res.status(422).send({error: 'post/ - Error al procesar la informacion: ' + message });
     }
-
-    let cupo = await dataTurnos.getCupoPorPisoEspecifico(req.body.IdGerencia, req.body.fechaTurno, req.body.IdEdificio, req.body.IdPiso)  
-    if(cupo <= 0 || cupo == undefined){
-        return res.status(422).send({error: 'No quedan cupos para el piso seleccionado en esta fecha.'});
-    }
-
-    let horarioEntrada = await dataTurnos.getCupoPorHorarioEntradaEspecifico(req.body.fechaTurno, req.body.IdEdificio, req.body.IdHorario)  
-    if(horarioEntrada <= 0){
-        return res.status(422).send({error: 'No quedan cupos para entrar a ese horario.'});
-    }
-
-    let idPisoxGerencia = await dataTurnos.getPisoxGerencia(req.user.IdGerencia, req.body.IdPiso)  
-    if(idPisoxGerencia == 0){
-        return res.status(422).send({error: 'No existe esta combinación de gerencias y pisos.'});
-    }
-
-    let nuevoTurno = {              
-                        idUsuario: req.body.idUsuario,
-                        idUsuarioPedido: req.user.DNI,
-                        fechaTurno: req.body.fechaTurno,
-                        idHorarioEntrada: req.body.IdHorario,
-                        idPisoxGerencia: idPisoxGerencia
-                      }
-
-    let turno = await dataTurnos.pushTurno(nuevoTurno)
-
-    return res.status(200).send({Message: 'Turno creado.'});
 });
 
 //PUT /api/turnos/:idTurno/usurio/:idUsuario
