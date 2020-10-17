@@ -5,6 +5,15 @@ async function getDiagnosticos(){
     return diagnosticos
 }
 
+async function getDiagnosticoDeUsuario(id){
+    let userHaveDiag = await connection.runQuery(`SELECT IdUsuario FROM diagnosticos WHERE IdUsuario = ${id};`)
+    if(userHaveDiag != null && userHaveDiag == id){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 async function grabarDiagnosticos(IdUsuario, Temperatura, PerdioGusto, ContactoCercano, EstoyEmbarazada, Cancer, Diabetes, Hepatica, PerdioOlfato, DolorGarganta, DificultadRespiratoria){
     console.log(IdUsuario, Temperatura, PerdioGusto, ContactoCercano, EstoyEmbarazada, Cancer, Diabetes, Hepatica, PerdioOlfato, DolorGarganta, DificultadRespiratoria)
     let diagnosticos = await connection.runQuery(`INSERT INTO diagnosticos
@@ -15,5 +24,6 @@ async function grabarDiagnosticos(IdUsuario, Temperatura, PerdioGusto, ContactoC
 
 module.exports = {
     getDiagnosticos,
-    grabarDiagnosticos
+    grabarDiagnosticos,
+    getDiagnosticoDeUsuario
 };
