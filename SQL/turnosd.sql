@@ -294,3 +294,68 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2020-10-01 21:32:51
+
+--NEW TABLES
+CREATE TABLE `turnosd`.`reportes` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Nombre` VARCHAR(100) NOT NULL,
+  `Query` VARCHAR(4000) NOT NULL,
+  `SelGerencia` BIT(1) NULL,
+  `SelUsuario` BIT(1) NULL,
+  `SelFecha` BIT(1) NULL,
+  `SelEdificio` BIT(1) NULL,
+  `SelPiso` BIT(1) NULL,
+  `SelHorario` BIT(1) NULL,
+  PRIMARY KEY (`Id`));
+--
+  CREATE TABLE `turnosd`.`configuraciones` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Nombre` VARCHAR(100) NULL,
+  `Valor` VARCHAR(100) NULL,
+  `Descripcion` VARCHAR(1000) NULL,
+  PRIMARY KEY (`Id`));
+
+
+INSERT INTO `turnosd`.`configuraciones` (`Nombre`, `Valor`, `Descripcion`) VALUES ('TurnosActivo', '1', 'Activa y Desactiva los Turnos');
+INSERT INTO `turnosd`.`configuraciones` (`Nombre`, `Valor`, `Descripcion`) VALUES ('HorariosActivo', '1', 'Activa los horarios');
+INSERT INTO `turnosd`.`configuraciones` (`Nombre`, `Valor`) VALUES ('DiagnosticosActivo', '1');
+
+
+USE `turnosd`;
+DROP procedure IF EXISTS `sp_rep_turnos`;
+DELIMITER $$
+USE `turnosd`$$
+CREATE PROCEDURE `sp_rep_turnos` (v_fecha varchar(100),v_edificio int,v_piso int,v_horario int,v_gerencia int)
+BEGIN
+ select t.Id TurnoId, u.DNI DNI, u.Nombre Nombre, t.FechaTurno,e.Nombre Edificio,p.Nombre Piso, he.Horario 
+    from turnos t
+    inner join pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+    INNER JOIN pisos p ON p.Id = pxg.IdPiso
+    INNER JOIN edificios e ON e.Id = p.IdEdificio
+    inner join usuarios u on u.DNI = t.IdUsuario
+    left join horariosentrada he on he.id = IdHorarioEntrada
+    where (1=1)
+    and (v_fecha is null or t.FechaTurno = v_fecha)
+    and (v_gerencia is null or pxg.IdGerencia = v_gerencia)
+    and (v_edificio is null or e.Id = v_edificio)
+	and (v_piso is null or p.Id = v_piso)
+	and (v_horario is null or he.Id = v_horario)
+    ;
+END$$
+DELIMITER ;
+
+INSERT INTO `turnosd`.`reportes` 
+(`Id`,`Nombre`,`Query`,`SelGerencia`,`SelUsuario`,`SelFecha`,`SelEdificio`,`SelPiso`,`SelHorario`) 
+VALUES
+(2,'Turnos por dia','sp_rep_turnos(\':fecha\',:edificio,:piso,:horario,:gerencia)','1','0','1','1','1','1');
+
+/*TEST DEL REPORTE
+--POST a URL
+http://localhost:3000/api/reportes/dinamic/2
+--body
+{
+	"campos": ["fecha","edificio","piso","horario","gerencia"],
+	"valores":  ["2020-10-19","NULL","NULL","NULL","NULL"]
+}
+
+*/

@@ -1,0 +1,4 @@
+Id;Nombre;Valor;Descripcion
+1;TurnosActivo;1;Activa y Desactiva los Turnos
+2;HorariosActivo;1;Activa los horarios
+3;DiagnosticosActivo;1;

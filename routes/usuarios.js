@@ -9,11 +9,23 @@ const requireAuth = require('../middlewares/requireAuth');
 
 router.use(requireAuth);
 
+// GET /api/usuarios/gerencias
+router.get('/gerencias', async function(req, res, next) {
+  try
+  {
+    let gerencias = await dataUsuarios.getGerencias(req.user);
+    res.send(gerencias);
+  }
+  catch ({ message }) 
+  {
+    return res.status(422).send({error: 'Error al procesar la informacion: ' + message });
+  }
+});
+
 // GET /api/usuarios/dependientes
 router.get('/dependientes', async function(req, res, next) {
   try
   {
-    console.log(req.user);
     let usuarios = await dataUsuarios.getUsuariosDependientes(req.user);
     res.send(usuarios);
   }

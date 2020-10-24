@@ -16,6 +16,7 @@ const usuariosRouter = require('./routes/usuarios');
 const edificiosRouter = require('./routes/edificios');
 const turnosRouter = require('./routes/turnos');
 const diagnosticosRouter = require('./routes/diagnosticos');
+const reportesRouter = require('./routes/reportes');
 
 var app = express();
 
@@ -34,6 +35,7 @@ app.use('/api/usuarios', usuariosRouter);
 app.use('/api/turnos', turnosRouter);
 app.use('/api/edificios', edificiosRouter);
 app.use('/api/diagnosticos', diagnosticosRouter);
+app.use('/api/reportes', reportesRouter);
 
 
 //rutas login

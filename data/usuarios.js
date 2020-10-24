@@ -11,6 +11,26 @@ async function getUsuarios(){
     return rest
 }
 
+async function getGerencias(usuario){
+    let query;
+
+    if (usuario.IdTipoDeUsuario == T_SUPERVISOR)
+    {
+        query = `select id,Nombre from gerencias where id = ` + usuario.IdGerencia;
+    }
+    else if (usuario.IdTipoDeUsuario == T_GERENTE)
+    {
+        query = `select id,Nombre from gerencias where id = ` + usuario.IdGerencia;
+    }
+    else
+    {
+        query = `select id,Nombre from gerencias`;
+    }
+
+    const rest = await connection.runQuery(query);
+    return rest
+}
+
 async function getUsuariosDependientes(usuario){
 
     let query;
@@ -88,5 +108,6 @@ module.exports = {
   getUsuarioPorEmail,
   updateUsuarioPassword,
   updateUsuario,
-  getUsuariosDependientes
+  getUsuariosDependientes,
+  getGerencias
 }
