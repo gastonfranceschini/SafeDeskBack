@@ -20,7 +20,7 @@ async function getTurnoPorId(turnoId){
     INNER JOIN edificios e ON e.Id = p.IdEdificio
     left join horariosentrada he on he.id = IdHorarioEntrada
     where t.Id = ${turnoId}`)
-    return rest
+    return rest;
 }
 
 

@@ -15,8 +15,8 @@ async function getReporteDinamico(id,campos,valores){
     //parsing de los campos del store
     for(let i = 0; i < campos.length; i++){ 
         query = query.replace(":" + campos[i], valores[i]);
-        console.log(query);
     }
+    console.log(query);
     //corro el store
     let reporte = await connection.runQuery(`call ${query}`)
     return reporte[0];

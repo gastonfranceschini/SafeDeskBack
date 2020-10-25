@@ -113,7 +113,7 @@ router.get('/:id', async (req, res, next)=>{
     try
     {
         let turno = await dataTurnos.getTurnoPorId(req.params.id);
-        res.send(turno);
+        res.send(turno[0]);
     }
     catch ({ message }) 
     {

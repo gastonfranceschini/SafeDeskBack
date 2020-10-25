@@ -347,7 +347,7 @@ DELIMITER ;
 INSERT INTO `turnosd`.`reportes` 
 (`Id`,`Nombre`,`Query`,`SelGerencia`,`SelUsuario`,`SelFecha`,`SelEdificio`,`SelPiso`,`SelHorario`) 
 VALUES
-(2,'Turnos por dia','sp_rep_turnos(\':fecha\',:edificio,:piso,:horario,:gerencia)','1','0','1','1','1','1');
+(2,'Turnos por dia','sp_rep_turnos(\':fecha\',:edificio,:piso,:horario,:gerencia)',1,0,1,1,1,1);
 
 /*TEST DEL REPORTE
 --POST a URL
