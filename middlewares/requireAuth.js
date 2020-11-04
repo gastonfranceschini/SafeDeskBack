@@ -7,8 +7,7 @@ module.exports = (req, res, next) => {
   try
   {
     const { authorization } = req.headers;
-    // authorization === 'Bearer laksjdflaksdjasdfklj'
-  
+
     if (!authorization) {
       return res.status(401).send({ error: 'Tenés que estar logeado, token ausente.' });
     }
@@ -22,7 +21,7 @@ module.exports = (req, res, next) => {
       const { userId } = payload;
       const usuario = await dataUsuarios.getUsuarioPorDNI(userId);
   
-      console.log(userId);
+      // console.log(userId);
   
       req.user = usuario[0];
       next();

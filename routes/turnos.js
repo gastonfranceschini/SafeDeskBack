@@ -8,11 +8,8 @@ var dateFormat = require('dateformat');
 
 const satisfactorio = 'satisfactorio' 
 const fallido = 'fallo la reserva del turno' 
-const yaReservado = 'Ya ha realizado esta reserva anteriormente.' 
-const cupoMaximoAlcanzado = 'Ya se ha alcanzado el cupo maximo' 
 
 router.use(requireAuth);
-
 
 //GET /api/turnos/usuario/:id - Turnos por Usuario ID
 router.get('/usuario/:id', async (req, res, next)=>{
@@ -74,8 +71,6 @@ router.get('/edificios/fecha/:fecha', async (req, res, next)=>{
 
 });
 
-   
-//getCupoPorHorarioEntrada(fechaTurno,IdEdificio) 
 //GET api/turnos/edificio/:idEdificio/fecha/:fecha/HorariosDeEntrada
 router.get('/edificio/:idEdificio/fecha/:fecha/HorariosDeEntrada', async (req, res, next)=>{
 
@@ -88,7 +83,7 @@ router.get('/edificio/:idEdificio/fecha/:fecha/HorariosDeEntrada', async (req, r
     {
       return res.status(422).send({error: '/edificio/:idEdificio/fecha/:fecha/HorariosDeEntrada - Error al procesar la informacion: ' + message });
     }
-  });
+});
   
 
 //GET /api/turnos/pisos/fecha/:fecha/edificio/:IdEdificio
@@ -120,7 +115,6 @@ router.get('/:id', async (req, res, next)=>{
       return res.status(422).send({error: '/:id - Error al procesar la informacion: ' + message });
     }
 
-
 });
 
 //GET /api/turnos - Todos los turnos
@@ -136,7 +130,7 @@ router.get('/', async function(req, res, next) {
       return res.status(422).send({error: '/ - Error al procesar la informacion: ' + message });
     }
 
-  });
+});
 
 //POST /api/turno
 router.post('/', async (req, res, next)=>{

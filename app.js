@@ -3,11 +3,6 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var passport = require('passport'); // Passport: Middleware de Node que facilita la autenticación de usuarios
-var mysql = require('mysql');
-
-//const bcrypt = require('bcrypt');
-//console.log(bcrypt.hashSync("100", 10));
 
 let indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
@@ -36,7 +31,6 @@ app.use('/api/turnos', turnosRouter);
 app.use('/api/edificios', edificiosRouter);
 app.use('/api/diagnosticos', diagnosticosRouter);
 app.use('/api/reportes', reportesRouter);
-
 
 //rutas login
 app.use('/api/logged',authLoggedRouter);

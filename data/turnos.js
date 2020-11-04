@@ -14,12 +14,12 @@ async function getTurnosPorUsuario(usuarioId){
 async function getTurnoPorId(turnoId){
     const rest = await connection
     .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
-    from turnos t
-    inner join pisosxgerencias pxg on pxg.id = IdPisoXGerencia
-    INNER JOIN pisos p ON p.Id = pxg.IdPiso
-    INNER JOIN edificios e ON e.Id = p.IdEdificio
-    left join horariosentrada he on he.id = IdHorarioEntrada
-    where t.Id = ${turnoId}`)
+      FROM turnos t
+      INNER JOIN pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+      INNER JOIN pisos p ON p.Id = pxg.IdPiso
+      INNER JOIN edificios e ON e.Id = p.IdEdificio
+      left JOIN horariosentrada he on he.id = IdHorarioEntrada
+      WHERE t.Id = ${turnoId}`)
     return rest;
 }
 
@@ -27,26 +27,26 @@ async function getTurnoPorId(turnoId){
 async function getTurnosDetallesPorUsuario(usuarioId){
     const rest = await connection
     .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
-    from turnos t
-    inner join pisosxgerencias pxg on pxg.id = IdPisoXGerencia
-    INNER JOIN pisos p ON p.Id = pxg.IdPiso
-    INNER JOIN edificios e ON e.Id = p.IdEdificio
-    left join horariosentrada he on he.id = IdHorarioEntrada
-    where FechaTurno > now()
-    and IdUsuario = ${usuarioId}`)
+      FROM turnos t
+      INNER JOIN pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+      INNER JOIN pisos p ON p.Id = pxg.IdPiso
+      INNER JOIN edificios e ON e.Id = p.IdEdificio
+      left JOIN horariosentrada he on he.id = IdHorarioEntrada
+      WHERE FechaTurno > now()
+      AND IdUsuario = ${usuarioId}`)
     return rest
 }
 
 async function getTurnosDetallesHistoricoPorUsuario(usuarioId){
     const rest = await connection
     .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
-    from turnos t
-    inner join pisosxgerencias pxg on pxg.id = IdPisoXGerencia
-    INNER JOIN pisos p ON p.Id = pxg.IdPiso
-    INNER JOIN edificios e ON e.Id = p.IdEdificio
-    left join horariosentrada he on he.id = IdHorarioEntrada
-    where FechaTurno < now()
-    and IdUsuario = ${usuarioId}`)
+      FROM turnos t
+      INNER JOIN pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+      INNER JOIN pisos p ON p.Id = pxg.IdPiso
+      INNER JOIN edificios e ON e.Id = p.IdEdificio
+      left JOIN horariosentrada he on he.id = IdHorarioEntrada
+      WHERE FechaTurno < now()
+      AND IdUsuario = ${usuarioId}`)
     return rest
 }
 
@@ -56,34 +56,34 @@ async function getTurnosDetallesHistoricoPorUsuario(usuarioId){
 // cupo x horario de entrada endpoint EDIFICIO
 async function getCupoPorHorarioEntrada(fechaTurno,IdEdificio){
     const horariosEntrada = await 
-      connection.runQuery(`select  he.cupo - (select count(*) from turnos t
-                inner join  pisosxgerencias pxg on pxg.id = IdPisoXGerencia
-                INNER JOIN pisos p ON p.Id = pxg.IdPiso
-                INNER JOIN edificios e ON e.Id = p.IdEdificio
-                where IdHorarioEntrada = he.id
-                and IdEdificio = he.IdEdificio
-                and t.FechaTurno = '${fechaTurno}') as Cupo,
-        he.id, he.horario
-        from horariosentrada he
-        where he.IdEdificio = ${IdEdificio}`)
+      connection.runQuery(`select  he.cupo - (select count(*) FROM turnos t
+                                                INNER JOIN  pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+                                                INNER JOIN pisos p ON p.Id = pxg.IdPiso
+                                                INNER JOIN edificios e ON e.Id = p.IdEdificio
+                                                WHERE IdHorarioEntrada = he.id
+                                                AND IdEdificio = he.IdEdificio
+                                                AND t.FechaTurno = '${fechaTurno}') as Cupo,
+                              he.id, he.horario
+                              FROM horariosentrada he
+                              WHERE he.IdEdificio = ${IdEdificio}`)
     return horariosEntrada
 }
 
 // cupo x horario de entrada endpoint EDIFICIO
 async function getCupoPorHorarioEntradaEspecifico(fechaTurno,IdEdificio, IdHorario){
     const horariosEntrada = await 
-      connection.runQuery(`select  he.cupo - (select count(*) from turnos t
-                inner join  pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+      connection.runQuery(`select  he.cupo - (select count(*) FROM turnos t
+                INNER JOIN  pisosxgerencias pxg on pxg.id = IdPisoXGerencia
                 INNER JOIN pisos p ON p.Id = pxg.IdPiso
                 INNER JOIN edificios e ON e.Id = p.IdEdificio
-                where IdHorarioEntrada = he.id
-                and IdEdificio = he.IdEdificio
-                and t.FechaTurno = '${fechaTurno}') as Cupo,
+                WHERE IdHorarioEntrada = he.id
+                AND IdEdificio = he.IdEdificio
+                AND t.FechaTurno = '${fechaTurno}') as Cupo,
         he.id, he.horario
-        from horariosentrada he
-        where he.IdEdificio = ${IdEdificio}
-        and Cupo > 0
-        and he.id = ${IdHorario}`)
+        FROM horariosentrada he
+        WHERE he.IdEdificio = ${IdEdificio}
+        AND Cupo > 0
+        AND he.id = ${IdHorario}`)
     return horariosEntrada[0].Cupo
 }
 
@@ -196,8 +196,8 @@ async function deleteTurno(turnoId){
 }
 
 module.exports = {
-    verificarReserva,
-    getCupoPorHorarioEntradaEspecifico,
+  verificarReserva,
+  getCupoPorHorarioEntradaEspecifico,
   getTurnosDetallesHistoricoPorUsuario,
   getTurnosDetallesPorUsuario,
   getTurnos, 
