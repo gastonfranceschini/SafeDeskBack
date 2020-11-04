@@ -344,10 +344,43 @@ BEGIN
 END$$
 DELIMITER ;
 
+ALTER TABLE `turnosd`.`reportes` 
+CHANGE COLUMN `SelGerencia` `SelGerencia` INT NULL DEFAULT NULL ,
+CHANGE COLUMN `SelUsuario` `SelUsuario` INT NULL DEFAULT NULL ,
+CHANGE COLUMN `SelFecha` `SelFecha` INT NULL DEFAULT NULL ,
+CHANGE COLUMN `SelEdificio` `SelEdificio` INT NULL DEFAULT NULL ,
+CHANGE COLUMN `SelPiso` `SelPiso` INT NULL DEFAULT NULL ,
+CHANGE COLUMN `SelHorario` `SelHorario` INT NULL DEFAULT NULL ;
+
+
 INSERT INTO `turnosd`.`reportes` 
 (`Id`,`Nombre`,`Query`,`SelGerencia`,`SelUsuario`,`SelFecha`,`SelEdificio`,`SelPiso`,`SelHorario`) 
 VALUES
 (2,'Turnos por dia','sp_rep_turnos(\':fecha\',:edificio,:piso,:horario,:gerencia)',1,0,1,1,1,1);
+
+
+/*DE TEST*/
+
+INSERT INTO `turnosd`.`reportes` 
+(`Id`,`Nombre`,`Query`,`SelGerencia`,`SelUsuario`,`SelFecha`,`SelEdificio`,`SelPiso`,`SelHorario`) 
+VALUES
+(3,'Casos Cercanos','sp_rep_turnos(\':fecha\',:edificio,:piso,:horario,:gerencia)',1,1,1,0,0,0);
+
+INSERT INTO `turnosd`.`reportes` 
+(`Id`,`Nombre`,`Query`,`SelGerencia`,`SelUsuario`,`SelFecha`,`SelEdificio`,`SelPiso`,`SelHorario`) 
+VALUES
+(4,'Turnos Fecha Mayor','sp_rep_turnos(\':fecha\',:edificio,:piso,:horario,:gerencia)',1,0,1,1,1,1);
+
+INSERT INTO `turnosd`.`reportes` 
+(`Id`,`Nombre`,`Query`,`SelGerencia`,`SelUsuario`,`SelFecha`,`SelEdificio`,`SelPiso`,`SelHorario`) 
+VALUES
+(5,'Turnos Fecha Menor','sp_rep_turnos(\':fecha\',:edificio,:piso,:horario,:gerencia)',1,0,1,1,1,1);
+
+--puedo hacer gestiones directamente con un registro de la bd, que campeon!
+INSERT INTO `turnosd`.`reportes` 
+(`Id`,`Nombre`,`Query`,`SelGerencia`,`SelUsuario`,`SelFecha`,`SelEdificio`,`SelPiso`,`SelHorario`) 
+VALUES
+(6,'Desactivar Usuario','sp_rep_turnos(\':fecha\',:edificio,:piso,:horario,:gerencia)',1,0,1,1,1,1);
 
 /*TEST DEL REPORTE
 --POST a URL

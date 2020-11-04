@@ -10,23 +10,28 @@ const fs = require("fs");
 
 //GET api/reportes/
 router.get('/', async (req, res, next)=>{
-    let reporte = await dataReportes.getEdificios()
+    let reporte = await dataReportes.getReportes()
     res.send(reporte)
 });
 
-//GET api/reportes/dinamic/:id
+//POST api/reportes/dinamic/:id
 router.post('/dinamic/:id', async (req, res, next)=>{
   
+  console.log ("body " + JSON.stringify(req.body));
   try
   {
     let reporte = await dataReportes.getReporteDinamico(req.params.id,req.body.campos,req.body.valores)
     //creo un espacio para escribir el csv que trajo el reporte dinamico
     const ws = fs.createWriteStream("reporte.csv");
     const jsonData = JSON.parse(JSON.stringify(reporte));
+    let delim = ';';
+
+    if (req.body.formatoAlternativo == true)
+      delim = ',';
 
     var promesa = new Promise((resolve, reject) => 
       {
-        fastcsv.write(jsonData, { headers: true, delimiter: ';' })
+        fastcsv.write(jsonData, { headers: true, delimiter: delim })
         .on("finish", function() {
           resolve(ws.path);
         })
