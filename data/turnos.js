@@ -23,6 +23,23 @@ async function getTurnoPorId(turnoId){
     return rest;
 }
 
+async function getTurnoPorIdYEscaneo(turnoId){
+    const escan = await connection
+    .runQuery(`update turnos
+                SET QrEscaneado = 1
+                WHERE t.Id = ${turnoId}`) 
+
+    const rest = await connection
+    .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
+      FROM turnos t
+      INNER JOIN pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+      INNER JOIN pisos p ON p.Id = pxg.IdPiso
+      INNER JOIN edificios e ON e.Id = p.IdEdificio
+      left JOIN horariosentrada he on he.id = IdHorarioEntrada
+      WHERE t.Id = ${turnoId}`)
+    return rest;
+}
+
 
 async function getTurnosDetallesPorUsuario(usuarioId){
     const rest = await connection
@@ -210,5 +227,6 @@ module.exports = {
   getCupoTurnosPorEdificio,
   getCupoPorPiso, 
   getCupoPorPisoEspecifico, 
-  getPisoxGerencia
+  getPisoxGerencia,
+  getTurnoPorIdYEscaneo
 }

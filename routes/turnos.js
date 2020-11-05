@@ -107,7 +107,7 @@ router.get('/:id', async (req, res, next)=>{
 
     try
     {
-        let turno = await dataTurnos.getTurnoPorId(req.params.id);
+        let turno = await dataTurnos.getTurnoPorIdYEscaneo(req.params.id);
         res.send(turno[0]);
     }
     catch ({ message }) 

@@ -21,7 +21,9 @@ module.exports = (req, res, next) => {
       const { userId } = payload;
       const usuario = await dataUsuarios.getUsuarioPorDNI(userId);
   
-      // console.log(userId);
+      if (usuario[0].Activo == 0) {
+        return res.status(422).send({ error: 'Usuario desactivado, comuniquese con el RRHH'});
+      }
   
       req.user = usuario[0];
       next();

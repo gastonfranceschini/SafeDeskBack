@@ -1,15 +1,26 @@
 const connection = require("./connection");
 
 async function getReportes(){
-    let reportes = await connection.runQuery(`select Id,Nombre,SelGerencia,SelUsuario,SelFecha,SelEdificio,SelPiso,SelHorario from reportes`)
+    let reportes = 
+    await connection.runQuery(`select Id,Nombre,SelGerencia,SelUsuario,SelFecha,SelEdificio,SelPiso,SelHorario from reportes`)
+    return reportes
+}
+
+async function getReportesEspecificos(idTipoUsuario){
+    
+    let reportes = 
+    await connection.runQuery(`select Id,Nombre,SelGerencia,SelUsuario,SelFecha,SelEdificio,SelPiso,SelHorario
+     from reportes where IdTipoUsuarioEspecifico is null or IdTipoUsuarioEspecifico = ${idTipoUsuario}`)
+
+
     return reportes
 }
 
 
-async function getReporteDinamico(id,campos,valores){
+async function getReporteDinamico(id,campos,valores,idTipoUsuario){
     //traigo el store de la base de datos
     let reportes = await connection.runQuery(`select Query from reportes
-    where id = ${id}`)
+    where id = ${id} and (IdTipoUsuarioEspecifico is null or IdTipoUsuarioEspecifico = ${idTipoUsuario})`)
 
     let query =  reportes[0].Query
     //parsing de los campos del store
@@ -29,5 +40,5 @@ async function getEdificio(id){
 
 module.exports = { getReporteDinamico,
         getReportes, 
-        getEdificio
+        getEdificio,getReportesEspecificos
 }

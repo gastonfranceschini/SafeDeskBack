@@ -380,7 +380,12 @@ VALUES
 INSERT INTO `turnosd`.`reportes` 
 (`Id`,`Nombre`,`Query`,`SelGerencia`,`SelUsuario`,`SelFecha`,`SelEdificio`,`SelPiso`,`SelHorario`) 
 VALUES
-(6,'Desactivar Usuario','sp_rep_turnos(\':fecha\',:edificio,:piso,:horario,:gerencia)',1,0,1,1,1,1);
+(6,'Desactivar Usuario','sp_desactivar_user(:usuario)',1,2,0,0,0,0);
+
+
+ALTER TABLE `turnosd`.`usuarios` 
+ADD COLUMN `Activo` BIT(1) NOT NULL DEFAULT 1 AFTER `IdJefeDirecto`;
+
 
 /*TEST DEL REPORTE
 --POST a URL
@@ -392,3 +397,158 @@ http://localhost:3000/api/reportes/dinamic/2
 }
 
 */
+
+USE `turnosd`;
+DROP procedure IF EXISTS `sp_rep_turnos_mayor`;
+DELIMITER $$
+USE `turnosd`$$
+CREATE PROCEDURE `sp_rep_turnos_mayor` (v_fecha varchar(100),v_edificio int,v_piso int,v_horario int,v_gerencia int)
+BEGIN
+ select t.Id TurnoId, u.DNI DNI, u.Nombre Nombre, t.FechaTurno,e.Nombre Edificio,p.Nombre Piso, he.Horario 
+    from turnos t
+    inner join pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+    INNER JOIN pisos p ON p.Id = pxg.IdPiso
+    INNER JOIN edificios e ON e.Id = p.IdEdificio
+    inner join usuarios u on u.DNI = t.IdUsuario
+    left join horariosentrada he on he.id = IdHorarioEntrada
+    where (1=1)
+    and (v_fecha is null or t.FechaTurno >= v_fecha)
+    and (v_gerencia is null or pxg.IdGerencia = v_gerencia)
+    and (v_edificio is null or e.Id = v_edificio)
+	and (v_piso is null or p.Id = v_piso)
+	and (v_horario is null or he.Id = v_horario)
+    ;
+END$$
+DELIMITER ;
+
+USE `turnosd`;
+DROP procedure IF EXISTS `sp_rep_turnos_menor`;
+DELIMITER $$
+USE `turnosd`$$
+CREATE PROCEDURE `sp_rep_turnos_menor` (v_fecha varchar(100),v_edificio int,v_piso int,v_horario int,v_gerencia int)
+BEGIN
+ select t.Id TurnoId, u.DNI DNI, u.Nombre Nombre, t.FechaTurno,e.Nombre Edificio,p.Nombre Piso, he.Horario 
+    from turnos t
+    inner join pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+    INNER JOIN pisos p ON p.Id = pxg.IdPiso
+    INNER JOIN edificios e ON e.Id = p.IdEdificio
+    inner join usuarios u on u.DNI = t.IdUsuario
+    left join horariosentrada he on he.id = IdHorarioEntrada
+    where (1=1)
+    and (v_fecha is null or t.FechaTurno <= v_fecha)
+    and (v_gerencia is null or pxg.IdGerencia = v_gerencia)
+    and (v_edificio is null or e.Id = v_edificio)
+	and (v_piso is null or p.Id = v_piso)
+	and (v_horario is null or he.Id = v_horario)
+    ;
+END$$
+
+DELIMITER ;
+USE `turnosd`;
+DROP procedure IF EXISTS `sp_rep_casos_cercanos`;
+DELIMITER $$
+USE `turnosd`$$
+CREATE PROCEDURE `sp_rep_casos_cercanos` (v_fecha varchar(100),v_usuario int)
+BEGIN
+ select t.Id TurnoId, u.DNI DNI, u.Nombre Nombre, t.FechaTurno,e.Nombre Edificio,p.Nombre Piso, he.Horario 
+    from turnos t
+    inner join pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+    INNER JOIN pisos p ON p.Id = pxg.IdPiso
+    INNER JOIN edificios e ON e.Id = p.IdEdificio
+    inner join usuarios u on u.DNI = t.IdUsuario
+    left join horariosentrada he on he.id = IdHorarioEntrada
+    where (1=1)
+    and (v_fecha is null or t.FechaTurno = v_fecha)
+    and p.Id in
+	(select pxg.IdPiso
+    from turnos t
+    inner join pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+    inner join usuarios u on u.DNI = t.IdUsuario
+    where (1=1)
+    and (v_fecha is null or t.FechaTurno = v_fecha)
+    and (v_usuario is null or  u.DNI = v_usuario))
+    ;
+END$$
+DELIMITER ;
+
+UPDATE `turnosd`.`reportes` SET `Query` = 'sp_rep_casos_cercanos(\':fecha\',:usuario)' WHERE (`Id` = '3');
+UPDATE `turnosd`.`reportes` SET `Query` = 'sp_rep_turnos_mayor(\':fecha\',:edificio,:piso,:horario,:gerencia)' WHERE (`Id` = '4');
+UPDATE `turnosd`.`reportes` SET `Query` = 'sp_rep_turnos_menor(\':fecha\',:edificio,:piso,:horario,:gerencia)' WHERE (`Id` = '5');
+
+USE `turnosd`;
+DROP procedure IF EXISTS `sp_desactivar_user`;
+DELIMITER $$
+USE `turnosd`$$
+CREATE PROCEDURE `sp_desactivar_user` (v_usuario int)
+BEGIN
+
+ UPDATE usuarios
+set Activo = 0
+where DNI  = v_usuario;
+
+select 'Usuario Desactivado' as MensajeSP; 
+ 
+END$$
+DELIMITER ;
+
+USE `turnosd`;
+DROP procedure IF EXISTS `sp_activar_user`;
+DELIMITER $$
+USE `turnosd`$$
+CREATE PROCEDURE `sp_activar_user` (v_usuario int)
+BEGIN
+
+ UPDATE usuarios
+set Activo = 1
+where DNI  = v_usuario;
+
+select 'Usuario Activado' as MensajeSP; 
+
+END$$
+DELIMITER ;
+
+USE `turnosd`;
+DROP procedure IF EXISTS `sp_reiniciar_user`;
+DELIMITER $$
+USE `turnosd`$$
+CREATE PROCEDURE `sp_reiniciar_user` (v_usuario int)
+BEGIN
+
+ UPDATE usuarios
+set Password = ''
+where DNI  = v_usuario;
+
+select 'Password Reiniciada' as MensajeSP; 
+ 
+END$$
+DELIMITER ;
+
+--puedo hacer gestiones directamente con un registro de la bd, que campeon!
+INSERT INTO `turnosd`.`reportes` 
+(`Id`,`Nombre`,`Query`,`SelGerencia`,`SelUsuario`,`SelFecha`,`SelEdificio`,`SelPiso`,`SelHorario`) 
+VALUES
+(7,'Activar Usuario','sp_activar_user(:usuario)',1,2,0,0,0,0);
+
+--puedo hacer gestiones directamente con un registro de la bd, que campeon!
+INSERT INTO `turnosd`.`reportes` 
+(`Id`,`Nombre`,`Query`,`SelGerencia`,`SelUsuario`,`SelFecha`,`SelEdificio`,`SelPiso`,`SelHorario`) 
+VALUES
+(8,'Blanquear Password','sp_reiniciar_user(:usuario)',1,2,0,0,0,0);
+
+ALTER TABLE `turnosd`.`reportes` 
+ADD COLUMN `IdTipoUsuarioEspecifico` INT(11) NULL DEFAULT NULL AFTER `SelHorario`,
+ADD INDEX `FK_Reportes_Usuarios_idx_idx` (`IdTipoUsuarioEspecifico` ASC);
+;
+ALTER TABLE `turnosd`.`reportes` 
+ADD CONSTRAINT `FK_Reportes_Usuarios_idx`
+  FOREIGN KEY (`IdTipoUsuarioEspecifico`)
+  REFERENCES `turnosd`.`tiposdeusuario` (`Id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+  UPDATE `turnosd`.`reportes` SET `IdTipoUsuarioEspecifico` = '4' WHERE (`Id` = '8');
+UPDATE `turnosd`.`reportes` SET `IdTipoUsuarioEspecifico` = '4' WHERE (`Id` = '7');
+UPDATE `turnosd`.`reportes` SET `IdTipoUsuarioEspecifico` = '4' WHERE (`Id` = '6');
+
+ALTER TABLE `turnosd`.`turnos` 
+ADD COLUMN `QrEscaneado` BIT(1) NOT NULL DEFAULT 0 AFTER `IdPisoXGerencia`;

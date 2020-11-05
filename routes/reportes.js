@@ -3,14 +3,14 @@ const dataReportes = require('../data/reportes');
 const requireAuth = require('../middlewares/requireAuth');
 const router = express.Router();
 
-//router.use(requireAuth);
+router.use(requireAuth);
 
 const fastcsv = require("fast-csv");
 const fs = require("fs");
 
 //GET api/reportes/
 router.get('/', async (req, res, next)=>{
-    let reporte = await dataReportes.getReportes()
+    let reporte = await dataReportes.getReportesEspecificos(req.user.IdTipoDeUsuario)
     res.send(reporte)
 });
 
@@ -20,10 +20,17 @@ router.post('/dinamic/:id', async (req, res, next)=>{
   console.log ("body " + JSON.stringify(req.body));
   try
   {
-    let reporte = await dataReportes.getReporteDinamico(req.params.id,req.body.campos,req.body.valores)
+    let reporte = await dataReportes.getReporteDinamico(req.params.id,req.body.campos,req.body.valores,req.user.IdTipoDeUsuario)
     //creo un espacio para escribir el csv que trajo el reporte dinamico
     const ws = fs.createWriteStream("reporte.csv");
     const jsonData = JSON.parse(JSON.stringify(reporte));
+
+    if (jsonData == "")
+      return res.status(422).send({error: 'No se encontraron datos...'});
+
+    if (reporte[0].MensajeSP != undefined)
+        return res.status(422).send({error: reporte[0].MensajeSP});
+
     let delim = ';';
 
     if (req.body.formatoAlternativo == true)
