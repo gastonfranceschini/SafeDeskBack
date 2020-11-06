@@ -386,18 +386,6 @@ VALUES
 ALTER TABLE `turnosd`.`usuarios` 
 ADD COLUMN `Activo` BIT(1) NOT NULL DEFAULT 1 AFTER `IdJefeDirecto`;
 
-
-/*TEST DEL REPORTE
---POST a URL
-http://localhost:3000/api/reportes/dinamic/2
---body
-{
-	"campos": ["fecha","edificio","piso","horario","gerencia"],
-	"valores":  ["2020-10-19","NULL","NULL","NULL","NULL"]
-}
-
-*/
-
 USE `turnosd`;
 DROP procedure IF EXISTS `sp_rep_turnos_mayor`;
 DELIMITER $$
@@ -523,13 +511,13 @@ select 'Password Reiniciada' as MensajeSP;
 END$$
 DELIMITER ;
 
---puedo hacer gestiones directamente con un registro de la bd, que campeon!
+-- puedo hacer gestiones directamente con un registro de la bd, que campeon!
 INSERT INTO `turnosd`.`reportes` 
 (`Id`,`Nombre`,`Query`,`SelGerencia`,`SelUsuario`,`SelFecha`,`SelEdificio`,`SelPiso`,`SelHorario`) 
 VALUES
 (7,'Activar Usuario','sp_activar_user(:usuario)',1,2,0,0,0,0);
 
---puedo hacer gestiones directamente con un registro de la bd, que campeon!
+-- puedo hacer gestiones directamente con un registro de la bd, que campeon!
 INSERT INTO `turnosd`.`reportes` 
 (`Id`,`Nombre`,`Query`,`SelGerencia`,`SelUsuario`,`SelFecha`,`SelEdificio`,`SelPiso`,`SelHorario`) 
 VALUES
