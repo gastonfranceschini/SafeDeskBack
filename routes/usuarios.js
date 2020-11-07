@@ -32,10 +32,7 @@ router.put('/password', async (req, res, next)=>{
     {
       return res.status(422).send({ error: 'Usuario no existe!' })
     }
-  
-    // console.log(oldPassword)
-    // console.log(usuario.Password)
-
+ 
     if(usuario.Password == '' || bcrypt.compareSync(oldPassword, usuario.Password)) 
     {
       let passwordCrypted = bcrypt.hashSync(newPassword, 10);
@@ -68,18 +65,24 @@ router.put('/password', async (req, res, next)=>{
 
 // PUT /api/usuarios/ cambia info del user
 router.put('/', async (req, res, next)=>{
-      console.log("DNI:" + req.body.dni)
-      console.log("nombre:" + req.body.nombre)
-      console.log("email:" + req.body.email)
+
   try
   {
     const usuarioModificado = {
       DNI: req.body.dni,
       nombre: req.body.nombre,
-      email: req.body.email
+      email: req.body.email,
+      idTipoUsuario: req.body.idTipoUsuario,
+      idGerencia: req.body.idGerencia,
+      idJefeDirecto: req.body.idJefeDirecto
     }
     let result = await dataUsuarios.updateUsuario(usuarioModificado)
-    res.send(result)
+      if(result.affectedRows == 1) {
+        result = true
+      } else {
+        result = false
+      }
+      res.send(result)
   }
   catch ({ message }) 
   {

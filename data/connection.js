@@ -9,10 +9,10 @@ async function runQuery(queryString) {
     try {
 
        var db = mysql.createConnection({
-            host:  process.env.dbhostname, 
-            database: process.env.database,
-            user: process.env.dbusername,
-            password: process.env.password 
+              host:  process.env.dbhostname, 
+              database: process.env.database,
+              user: process.env.dbusername,
+              password: process.env.password 
             });
         
             var promesa = new Promise((resolve, reject) => 

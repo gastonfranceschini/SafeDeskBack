@@ -67,22 +67,20 @@ async function getUsuarioPorEmail(email){
 }
 
 async function updateUsuario(usuario){
-    let dni = usuario.dni
-    let pass = usuario.pass
+    let dni = usuario.DNI
     let nombre = usuario.nombre
     let email = usuario.email
-    let idTipoUsuario = usuario.IdTipoUsuario
-    let idGerencia = usuario.IdGerencia
-    let idJefeDirecto = usuario.IdJefeDirecto
+    let idTipoUsuario = usuario.idTipoUsuario
+    let idGerencia = usuario.idGerencia
+    let idJefeDirecto = usuario.idJefeDirecto
 
-    let query = `UPDATE usuarios \
-                  SET Password = "${pass}" \ 
-                      Nombre = "${nombre}" \
-                      Email = "${email}" \
-                      IdTipoDeUsuario = "${idTipoUsuario}" \
-                      IdGerencia = "${idGerencia}" \
-                      IdJefeDirecto = "${idJefeDirecto}" \
-                  WHERE DNI = "${dni}"`
+    let query = `UPDATE usuarios
+                  SET Nombre = "${nombre}",
+                      Email = "${email}",
+                      IdTipoDeUsuario = ${idTipoUsuario},
+                      IdGerencia = ${idGerencia},
+                      IdJefeDirecto = ${idJefeDirecto}
+                  WHERE DNI = ${dni};`
 
     const user = await connection
           .runQuery(query)
