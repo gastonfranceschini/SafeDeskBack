@@ -16,7 +16,7 @@ router.post('/signin', async (req, res) => {
 
   let usuario = await dataUsuarios.getUsuarioPorDNI(dni);
   usuario = usuario[0];
-  console.log("Usuario: " + usuario);
+  console.log("Usuario: " + JSON.stringify(usuario));
 
   if(usuario == null) 
   {
@@ -27,7 +27,7 @@ router.post('/signin', async (req, res) => {
     return res.status(422).send({ error: 'Usuario desactivado, comuniquese con el sector de RRHH'});
   }
 
-  if(usuario.Password = '' || bcrypt.compareSync(password, usuario.Password)) 
+  if(usuario.Password == '' || bcrypt.compareSync(password, usuario.Password)) 
   {
     const token = jwt.sign({ userId: usuario.DNI }, process.env.TokenKey);
     res.send({ token: token, 

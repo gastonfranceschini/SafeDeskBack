@@ -552,3 +552,6 @@ UPDATE `turnosd`.`reportes` SET `IdTipoUsuarioEspecifico` = '4' WHERE (`Id` = '6
 
 ALTER TABLE `turnosd`.`turnos` 
 ADD COLUMN `QrEscaneado` BIT(1) NOT NULL DEFAULT 0 AFTER `IdPisoXGerencia`;
+
+ALTER TABLE `turnosd`.`usuarios` 
+CHANGE COLUMN `Activo` `Activo` INT NOT NULL DEFAULT 1 ;
