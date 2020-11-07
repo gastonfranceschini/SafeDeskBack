@@ -17,4 +17,10 @@ router.post('/', async (req, res, next)=>{
     res.send(diagnosticos);
 });
 
+//GET - api/diagnosticos/valido
+router.get('/valido', async (req, res, next)=>{
+    let diagnosticos = await dataDiagnosticos.getDiagnosticoValido(req.user.DNI);
+    res.send(diagnosticos);
+});
+
 module.exports = router;
