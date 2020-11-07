@@ -30,7 +30,8 @@ router.post('/signin', async (req, res) => {
   if(usuario.Password = '' || bcrypt.compareSync(password, usuario.Password)) 
   {
     const token = jwt.sign({ userId: usuario.DNI }, process.env.TokenKey);
-    res.send({ token: token, 
+    res.send({ 
+        token: token, 
         userId: usuario.DNI, 
         Nombre: usuario.Nombre,
         Email: usuario.Email,
@@ -40,13 +41,6 @@ router.post('/signin', async (req, res) => {
   } else {
     return res.status(422).send({ error: 'Password o DNI invalido!' });
   }
-});
-
-//GET /api/auth/logout
-router.get('/logout', async(req, res)=> {
-  req.logout();
-  res.redirect('/');
-  return res.send({ token: "", userId: "" });
 });
 
 module.exports = router;

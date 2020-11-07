@@ -4,36 +4,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const requireAuth = require('../middlewares/requireAuth');
 
-// const satisfactorio = { estado: 'satisfactorio' }
-// const fallido = { estado: 'fallido' }
-
 router.use(requireAuth);
-
-// GET /api/usuarios/gerencias
-router.get('/gerencias', async function(req, res, next) {
-  try
-  {
-    let gerencias = await dataUsuarios.getGerencias(req.user);
-    res.send(gerencias);
-  }
-  catch ({ message }) 
-  {
-    return res.status(422).send({error: 'Error al procesar la informacion: ' + message });
-  }
-});
-
-// GET /api/usuarios/dependientes
-router.get('/dependientes', async function(req, res, next) {
-  try
-  {
-    let usuarios = await dataUsuarios.getUsuariosDependientes(req.user);
-    res.send(usuarios);
-  }
-  catch ({ message }) 
-  {
-    return res.status(422).send({error: 'Error al procesar la informacion: ' + message });
-  }
-});
 
 // GET /api/usuarios
 router.get('/', async function(req, res, next) {
@@ -62,8 +33,8 @@ router.put('/password', async (req, res, next)=>{
       return res.status(422).send({ error: 'Usuario no existe!' })
     }
   
-    console.log(oldPassword)
-    console.log(usuario.Password)
+    // console.log(oldPassword)
+    // console.log(usuario.Password)
 
     if(bcrypt.compareSync(oldPassword, usuario.Password)) 
     {
@@ -75,6 +46,13 @@ router.put('/password', async (req, res, next)=>{
       }
 
       let result = await dataUsuarios.updateUsuarioPassword(userEdit)
+
+      // recibo resultado del query
+      if(result.affectedRows == 1) {
+        result = true
+      } else {
+        result = false
+      }
       res.send(result)
 
     } else {
@@ -90,16 +68,44 @@ router.put('/password', async (req, res, next)=>{
 
 // PUT /api/usuarios/ cambia info del user
 router.put('/', async (req, res, next)=>{
+      console.log("DNI:" + req.body.dni)
+      console.log("nombre:" + req.body.nombre)
+      console.log("email:" + req.body.email)
   try
   {
-    //let passwordCrypted = bcrypt.hashSync(req.body.password, 10);
-    const usuarioNuevo = {
+    const usuarioModificado = {
       DNI: req.body.dni,
       nombre: req.body.nombre,
       email: req.body.email
     }
-    let result = await dataUsuarios.updateUsuario(usuarioNuevo)
+    let result = await dataUsuarios.updateUsuario(usuarioModificado)
     res.send(result)
+  }
+  catch ({ message }) 
+  {
+    return res.status(422).send({error: 'Error al procesar la informacion: ' + message });
+  }
+});
+
+// GET /api/usuarios/gerencias
+router.get('/gerencias', async function(req, res, next) {
+  try
+  {
+    let gerencias = await dataUsuarios.getGerencias(req.user);
+    res.send(gerencias);
+  }
+  catch ({ message }) 
+  {
+    return res.status(422).send({error: 'Error al procesar la informacion: ' + message });
+  }
+});
+
+// GET /api/usuarios/dependientes
+router.get('/dependientes', async function(req, res, next) {
+  try
+  {
+    let usuarios = await dataUsuarios.getUsuariosDependientes(req.user);
+    res.send(usuarios);
   }
   catch ({ message }) 
   {

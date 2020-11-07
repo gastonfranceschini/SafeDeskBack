@@ -5,9 +5,9 @@ const requireAuth = require('../middlewares/requireAuth');
 
 router.use(requireAuth);
 
-//GET/authLogged/current
+//GET /api/logged/current
 router.get('/current', async (req, res) => {
-  res.send(req.user);
+  return res.send(req.user);
 });
 
 module.exports = router;

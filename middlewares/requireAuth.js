@@ -9,20 +9,20 @@ module.exports = (req, res, next) => {
     const { authorization } = req.headers;
 
     if (!authorization) {
-      return res.status(401).send({ error: 'Tenés que estar logeado, token ausente.' });
+      return res.status(401).send({ error: 'Tenés que estar logueado, token ausente.' });
     }
   
     const token = authorization.replace('Bearer ', '');
     jwt.verify(token, process.env.TokenKey, async (err, payload) => {
       if (err) {
-        return res.status(401).send({ error: 'Tenés que estar logeado, token incorrecto.' });
+        return res.status(401).send({ error: 'Tenés que estar logueado, token incorrecto.' });
       }
   
       const { userId } = payload;
       const usuario = await dataUsuarios.getUsuarioPorDNI(userId);
   
       if (usuario[0].Activo == 0) {
-        return res.status(422).send({ error: 'Usuario desactivado, comuniquese con el RRHH'});
+        return res.status(422).send({ error: 'Usuario desactivado, por favor comunicate con el equipo de RRHH.'});
       }
   
       req.user = usuario[0];
