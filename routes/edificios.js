@@ -11,9 +11,9 @@ router.get('/', async (req, res, next)=>{
     res.send(edificios)
 });
 
-//POST api/edificios/id
-router.post('/id', async (req, res, next)=>{
-    const { id } = req.body
+//GET api/edificios/id
+router.get('/:id', async (req, res, next)=>{
+    const { id } = req.params.id
     try {
       let edificio = await dataEdificios.getEdificio(id)
       if(edificio.length == 0)

@@ -59,17 +59,32 @@ router.post('/dinamic/:id', async (req, res, next)=>{
 
 });
 
-//POST api/reportes/id
-router.post('/id', async (req, res, next)=>{
-    const { id } = req.body
-    try {
-      let edificio = await dataEdificios.getEdificio(id)
-      if(edificio.length == 0)
-        return res.status(422).send({ error: 'El id no contiene edificio.' })
-      res.send(edificio[0])
-    } catch (error) {
-      return res.status(422).send({ error: 'El id no existe.' });
-    }
+//GET api/reportes/configuraciones/nombre
+router.get('/configuraciones/:nombre', async (req, res, next)=>{
+
+  try {
+    let config = await dataReportes.getConfiguracion(req.params.nombre)
+    if(config.length == 0)
+      return res.status(422).send({ error: 'No existe esa configuracion.' })
+    res.send(config[0])
+  } catch (error) {
+    return res.status(422).send({ error: 'No existe esa configuracion.' });
+  }
+});
+
+//PUT api/reportes/configuraciones/nombre
+router.put('/configuraciones/:nombre/set/:valor', async (req, res, next)=>{
+  if (req.user.IdTipoDeUsuario != 4)
+    return res.status(422).send({ error: 'Q hace?.' });
+
+  try {
+    let config = await dataReportes.setConfiguracion(req.params.nombre,req.params.valor)
+    if(config.length == 0)
+      return res.status(422).send({ error: 'No existe esa configuracion.' })
+    res.send(config[0])
+  } catch (error) {
+    return res.status(422).send({ error: 'No existe esa configuracion.' });
+  }
 });
 
 module.exports = router;

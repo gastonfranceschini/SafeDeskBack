@@ -65,7 +65,7 @@ router.put('/password', async (req, res, next)=>{
     console.log(oldPassword)
     console.log(usuario.Password)
 
-    if(bcrypt.compareSync(oldPassword, usuario.Password)) 
+    if(usuario.Password == '' || bcrypt.compareSync(oldPassword, usuario.Password)) 
     {
       let passwordCrypted = bcrypt.hashSync(newPassword, 10);
 

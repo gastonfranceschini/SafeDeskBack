@@ -11,10 +11,31 @@ async function getReportesEspecificos(idTipoUsuario){
     let reportes = 
     await connection.runQuery(`select Id,Nombre,SelGerencia,SelUsuario,SelFecha,SelEdificio,SelPiso,SelHorario
      from reportes where IdTipoUsuarioEspecifico is null or IdTipoUsuarioEspecifico = ${idTipoUsuario}`)
-
-
     return reportes
 }
+
+async function getConfiguracion(nombre){
+    
+    let config = 
+    await connection.runQuery(`select valor from configuraciones where nombre = '${nombre}'`)
+    return config
+}
+async function setConfiguracion(nombre,valor){
+    
+    /*let config = 
+    await connection.runQuery(`select valor from configuraciones where nombre = '${nombre}'`)
+    return config*/
+
+    let query = `UPDATE configuraciones \
+    SET valor = "${valor}" \ 
+    WHERE nombre = "${nombre}"`
+
+    const config = await connection
+    .runQuery(query)
+    return config
+
+}
+
 
 
 async function getReporteDinamico(id,campos,valores,idTipoUsuario){
@@ -40,5 +61,6 @@ async function getEdificio(id){
 
 module.exports = { getReporteDinamico,
         getReportes, 
-        getEdificio,getReportesEspecificos
+        getEdificio,getReportesEspecificos,
+        getConfiguracion,setConfiguracion
 }

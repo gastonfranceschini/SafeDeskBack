@@ -43,7 +43,7 @@ async function getTurnoPorIdYEscaneo(turnoId){
 
 async function getTurnosDetallesPorUsuario(usuarioId){
     const rest = await connection
-    .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
+    .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario, concat_ws(',', e.Lat, e.Long)  as GeoPos
       FROM turnos t
       INNER JOIN pisosxgerencias pxg on pxg.id = IdPisoXGerencia
       INNER JOIN pisos p ON p.Id = pxg.IdPiso
