@@ -6,21 +6,26 @@ const requireAuth = require('../middlewares/requireAuth');
 
 router.use(requireAuth);
 
+//=======================================================
 // GET /api/usuarios
+//=======================================================
 router.get('/', async function(req, res, next) {
   let usuarios = await dataUsuarios.getUsuarios();
   res.send(usuarios);
 });
 
-
+//=======================================================
 //POST /api/usuarios/dni
+//=======================================================
 router.post('/dni', async (req, res, next)=>{
     const { dni }  = req.body
     let usuario = await dataUsuarios.getUsuarioPorDNI(dni)
     res.send(usuario[0])
 });
 
+//=======================================================
 // PUT /api/usuarios/password - cambiar password
+//=======================================================
 router.put('/password', async (req, res, next)=>{
   const { dni, oldPassword, newPassword} = req.body
   try
@@ -63,7 +68,9 @@ router.put('/password', async (req, res, next)=>{
 
 });
 
+//=======================================================
 // PUT /api/usuarios/ cambia info del user
+//=======================================================
 router.put('/', async (req, res, next)=>{
 
   try
@@ -90,7 +97,9 @@ router.put('/', async (req, res, next)=>{
   }
 });
 
+//=======================================================
 // GET /api/usuarios/gerencias
+//=======================================================
 router.get('/gerencias', async function(req, res, next) {
   try
   {
@@ -103,7 +112,9 @@ router.get('/gerencias', async function(req, res, next) {
   }
 });
 
+//=======================================================
 // GET /api/usuarios/dependientes
+//=======================================================
 router.get('/dependientes', async function(req, res, next) {
   try
   {
