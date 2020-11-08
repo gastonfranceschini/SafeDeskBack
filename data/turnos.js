@@ -13,55 +13,55 @@ async function getTurnosPorUsuario(usuarioId){
 
 async function getTurnoPorId(turnoId){
     const rest = await connection
-    .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
+    .runQuery(`SELECT t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
       FROM turnos t
-      INNER JOIN pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+      INNER JOIN pisosxgerencias pxg ON pxg.id = IdPisoXGerencia
       INNER JOIN pisos p ON p.Id = pxg.IdPiso
       INNER JOIN edificios e ON e.Id = p.IdEdificio
-      left JOIN horariosentrada he on he.id = IdHorarioEntrada
+      left JOIN horariosentrada he ON he.id = IdHorarioEntrada
       WHERE t.Id = ${turnoId}`)
     return rest;
 }
 
 async function getTurnoPorIdYEscaneo(turnoId){
     const escan = await connection
-    .runQuery(`update turnos
-                SET QrEscaneado = 1
-                WHERE t.Id = ${turnoId}`) 
+        .runQuery(`UPDATE turnos t
+                    SET QrEscaneado = 1
+                    WHERE t.Id = ${turnoId}`) 
 
     const rest = await connection
-    .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
-      FROM turnos t
-      INNER JOIN pisosxgerencias pxg on pxg.id = IdPisoXGerencia
-      INNER JOIN pisos p ON p.Id = pxg.IdPiso
-      INNER JOIN edificios e ON e.Id = p.IdEdificio
-      left JOIN horariosentrada he on he.id = IdHorarioEntrada
-      WHERE t.Id = ${turnoId}`)
+        .runQuery(`SELECT t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
+                    FROM turnos t
+                    INNER JOIN pisosxgerencias pxg ON pxg.id = IdPisoXGerencia
+                    INNER JOIN pisos p ON p.Id = pxg.IdPiso
+                    INNER JOIN edificios e ON e.Id = p.IdEdificio
+                    LEFT JOIN horariosentrada he ON he.id = IdHorarioEntrada
+                    WHERE t.Id = ${turnoId}`)
     return rest;
 }
 
-
 async function getTurnosDetallesPorUsuario(usuarioId){
     const rest = await connection
-    .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario, concat_ws(',', e.Lat, e.Long)  as GeoPos
-      FROM turnos t
-      INNER JOIN pisosxgerencias pxg on pxg.id = IdPisoXGerencia
-      INNER JOIN pisos p ON p.Id = pxg.IdPiso
-      INNER JOIN edificios e ON e.Id = p.IdEdificio
-      left JOIN horariosentrada he on he.id = IdHorarioEntrada
-      WHERE FechaTurno > now()
-      AND IdUsuario = ${usuarioId}`)
+    .runQuery(`SELECT t.Id TurnoId, FechaTurno, p.Nombre Piso, e.Nombre Edificio, 
+                  he.Horario, concat_ws(',', e.Lat, e.Long)  as GeoPos
+                FROM turnos t
+                INNER JOIN pisosxgerencias pxg ON pxg.id = IdPisoXGerencia
+                INNER JOIN pisos p ON p.Id = pxg.IdPiso
+                INNER JOIN edificios e ON e.Id = p.IdEdificio
+                LEFT JOIN horariosentrada he ON he.id = IdHorarioEntrada
+                WHERE FechaTurno > now()
+                AND IdUsuario = ${usuarioId}`)
     return rest
 }
 
 async function getTurnosDetallesHistoricoPorUsuario(usuarioId){
     const rest = await connection
-    .runQuery(`select t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
+    .runQuery(`SELECT t.Id TurnoId,FechaTurno,p.Nombre Piso,e.Nombre Edificio, he.Horario 
       FROM turnos t
-      INNER JOIN pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+      INNER JOIN pisosxgerencias pxg ON pxg.id = IdPisoXGerencia
       INNER JOIN pisos p ON p.Id = pxg.IdPiso
       INNER JOIN edificios e ON e.Id = p.IdEdificio
-      left JOIN horariosentrada he on he.id = IdHorarioEntrada
+      left JOIN horariosentrada he ON he.id = IdHorarioEntrada
       WHERE FechaTurno < now()
       AND IdUsuario = ${usuarioId}`)
     return rest
@@ -73,8 +73,8 @@ async function getTurnosDetallesHistoricoPorUsuario(usuarioId){
 // cupo x horario de entrada endpoint EDIFICIO
 async function getCupoPorHorarioEntrada(fechaTurno,IdEdificio){
     const horariosEntrada = await 
-      connection.runQuery(`select  he.cupo - (select count(*) FROM turnos t
-                                                INNER JOIN  pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+      connection.runQuery(`SELECT  he.cupo - (SELECT count(*) FROM turnos t
+                                                INNER JOIN  pisosxgerencias pxg ON pxg.id = IdPisoXGerencia
                                                 INNER JOIN pisos p ON p.Id = pxg.IdPiso
                                                 INNER JOIN edificios e ON e.Id = p.IdEdificio
                                                 WHERE IdHorarioEntrada = he.id
@@ -89,8 +89,8 @@ async function getCupoPorHorarioEntrada(fechaTurno,IdEdificio){
 // cupo x horario de entrada endpoint EDIFICIO
 async function getCupoPorHorarioEntradaEspecifico(fechaTurno,IdEdificio, IdHorario){
     const horariosEntrada = await 
-      connection.runQuery(`select  he.cupo - (select count(*) FROM turnos t
-                INNER JOIN  pisosxgerencias pxg on pxg.id = IdPisoXGerencia
+      connection.runQuery(`SELECT  he.cupo - (SELECT count(*) FROM turnos t
+                INNER JOIN  pisosxgerencias pxg ON pxg.id = IdPisoXGerencia
                 INNER JOIN pisos p ON p.Id = pxg.IdPiso
                 INNER JOIN edificios e ON e.Id = p.IdEdificio
                 WHERE IdHorarioEntrada = he.id
@@ -129,11 +129,11 @@ async function getCupoPorPiso(IdGerencia, fechaTurno, IdEdificio){
                                                     WHERE t.FechaTurno = '${fechaTurno}' 
                                                     AND t.IdPisoXGerencia = pxg.Id )) as Cupo,
                                   p.Id as pID, p.Nombre, p.Numero
-                          FROM pisosxgerencias pxg
-                          INNER JOIN pisos p ON p.Id = pxg.IdPiso
-                          WHERE 	pxg.IdGerencia = ${IdGerencia} AND p.IdEdificio = ${IdEdificio}
-                          GROUP BY pID, p.Nombre, p.Numero
-                          HAVING Cupo > 0`)
+                            FROM pisosxgerencias pxg
+                            INNER JOIN pisos p ON p.Id = pxg.IdPiso
+                            WHERE 	pxg.IdGerencia = ${IdGerencia} AND p.IdEdificio = ${IdEdificio}
+                            GROUP BY pID, p.Nombre, p.Numero
+                            HAVING Cupo > 0`)
 
     return cupoTurnosPorPiso
 }
@@ -145,13 +145,14 @@ async function getCupoPorPisoEspecifico(IdGerencia, fechaTurno, IdEdificio, IdPi
                                                     FROM turnos t 
                                                     WHERE t.FechaTurno = '${fechaTurno}' 
                                                     AND t.IdPisoXGerencia = pxg.Id )) as Cupo,
-                                  p.Id as pID, p.Nombre, p.Numero
-                          FROM pisosxgerencias pxg
-                          INNER JOIN pisos p ON p.Id = pxg.IdPiso
-                          WHERE pxg.IdGerencia = ${IdGerencia} 
-                          AND p.IdEdificio = ${IdEdificio} 
-                          AND p.Id = ${IdPiso} 
-                          GROUP BY pID, p.Nombre, p.Numero`)
+                                                      p.Id as pID, p.Nombre, p.Numero
+                                                    FROM pisosxgerencias pxg
+                                                    INNER JOIN pisos p ON p.Id = pxg.IdPiso
+                                                    WHERE pxg.IdGerencia = ${IdGerencia} 
+                                                    AND p.IdEdificio = ${IdEdificio} 
+                                                    AND p.Id = ${IdPiso} 
+                                                    GROUP BY pID, p.Nombre, p.Numero`)
+
     return cupoTurnosPorPiso[0].Cupo
 }
 
@@ -182,34 +183,14 @@ async function verificarReserva(usuarioId, fechaTurno){
     return confirmarReservado[0].count
 }
 
-async function updateTurno(turno){
-    let o_id = new ObjectId(turno._id); 
-    const clientmongo = await connection.getConnection();
-    const query = {_id: o_id};
-
-    const newvalues = {$set: 
-        {
-            actividadId: turno.actividadId,
-            usuarioId: turno.usuarioId,
-            fechaActividad: turno.fechaActividad,
-            fechaReserva: turno.fechaReserva,
-            asistencia: turno.asistencia
-        }
-    };
-
-    const result = await clientmongo.db("safe_distance")
-        .collection("turnos")
-        .updateOne(query,newvalues)
-    return result;
+async function updateTurno(){
+    // placeholder
 }
 
 async function deleteTurno(turnoId){
-    let o_id = new ObjectId(turnoId); 
-    const clientmongo = await connection.getConnection();
-    const result = await clientmongo.db("safe_distance")
-        .collection("turnos")
-        .deleteOne({_id: o_id})
-    return result;
+    const turnoBorrado = await 
+      connection.runQuery(`DELETE FROM turnos WHERE Id = ${turnoId}`)
+    return turnoBorrado
 }
 
 module.exports = {

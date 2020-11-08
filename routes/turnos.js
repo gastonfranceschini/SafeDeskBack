@@ -11,7 +11,9 @@ const fallido = 'fallo la reserva del turno'
 
 router.use(requireAuth);
 
-//GET /api/turnos/usuario/:id - Turnos por Usuario ID
+//===================================================
+//GET /api/turnos/usuario/:id - Turno más próximo por Usuario ID
+//===================================================
 router.get('/usuario/:id', async (req, res, next)=>{
 
     try
@@ -26,7 +28,9 @@ router.get('/usuario/:id', async (req, res, next)=>{
 
 });
 
+//=======================================
 //GET /api/turnos/misturnos - mis turnos
+//=======================================
 router.get('/misturnos', async (req, res, next)=>{
 
     try
@@ -40,7 +44,9 @@ router.get('/misturnos', async (req, res, next)=>{
     }
 });
 
-//GET /api/turnos/misturnoshistorico - mis turnos pasados
+//=======================================================================================================
+//GET /api/turnos/misturnoshistorico - lista de turnos anteriores a la fecha actual del usuario logueado
+//=======================================================================================================
 router.get('/misturnoshistorico', async (req, res, next)=>{
 
     try
@@ -56,7 +62,9 @@ router.get('/misturnoshistorico', async (req, res, next)=>{
 });
 
 
+//=======================================
 //GET /api/turnos/edificios/fecha/:fecha 
+//=======================================
 router.get('/edificios/fecha/:fecha', async (req, res, next)=>{
 
     try
@@ -71,7 +79,9 @@ router.get('/edificios/fecha/:fecha', async (req, res, next)=>{
 
 });
 
+//===================================================================
 //GET api/turnos/edificio/:idEdificio/fecha/:fecha/HorariosDeEntrada
+//===================================================================
 router.get('/edificio/:idEdificio/fecha/:fecha/HorariosDeEntrada', async (req, res, next)=>{
 
     try
@@ -86,9 +96,10 @@ router.get('/edificio/:idEdificio/fecha/:fecha/HorariosDeEntrada', async (req, r
 });
   
 
-//GET /api/turnos/pisos/fecha/:fecha/edificio/:IdEdificio
+//====================================================================================================
+//GET /api/turnos/pisos/fecha/:fecha/edificio/:IdEdificio - trae los cupos por piso de una fecha dada
+//====================================================================================================
 router.get('/pisos/fecha/:fecha/edificio/:IdEdificio', async (req, res, next)=>{
-
     
     try
     {
@@ -102,7 +113,9 @@ router.get('/pisos/fecha/:fecha/edificio/:IdEdificio', async (req, res, next)=>{
 
 });
 
-//GET /api/turnos/:id - Turnos por ID
+//=============================================
+//GET /api/turnos/:id - Turnos por ID de turno
+//=============================================
 router.get('/:id', async (req, res, next)=>{
 
     try
@@ -117,13 +130,15 @@ router.get('/:id', async (req, res, next)=>{
 
 });
 
+//===================================
 //GET /api/turnos - Todos los turnos
+//===================================
 router.get('/', async function(req, res, next) {
 
     try
     {
         let turnos = await dataTurnos.getTurnos();
-        res.send(turnos[0]);
+        res.send(turnos);
     }
     catch ({ message }) 
     {
@@ -132,7 +147,9 @@ router.get('/', async function(req, res, next) {
 
 });
 
-//POST /api/turno
+//=================
+//POST /api/turnos
+//================
 router.post('/', async (req, res, next)=>{
 
     try
@@ -165,13 +182,12 @@ router.post('/', async (req, res, next)=>{
             return res.status(422).send({error: 'No existe esta combinación de gerencias y pisos.'});
         }
     
-
         let nuevoTurno = {              
                             idUsuario: req.body.idUsuario,
                             idUsuarioPedido: req.user.DNI,
                             fechaTurno: req.body.fechaTurno,
                             idHorarioEntrada: req.body.idHorarioEntrada,
-                            idPisoxGerencia: idPisoxGerencia
+                            idPisoxGerencia: req.body.idPisoxGerencia
                         }
 
         let turno = await dataTurnos.pushTurno(nuevoTurno)
@@ -184,54 +200,17 @@ router.post('/', async (req, res, next)=>{
     }
 });
 
-//PUT /api/turnos/:idTurno/usurio/:idUsuario
-router.put('/:idTurno/usuario/:idUsuario', async (req, res, next)=>{
-    let turno = await dataTurnos.getTurnoPorId(req.params.idTurno);
-    console.log('TURNO: '+ JSON.stringify(turno))
-    //si mi turno nuevo es diferente hago mas validaciones
-    if (turno.gerenciaId != ObjectId(req.body.gerenciaId) || turno.fechaActividad != req.body.fechaActividad)
-    {
-        if (new Date(req.body.fechaActividad) < new Date()) 
-        {
-            return res.status(422).send({error: 'Fecha menor a la actual...'});
-        }
-
-        var cantidadTurnos = await dataTurnos.getCantidadTurnos(req.body.gerenciaId, req.params.idUsuario);
-        var cupo = await dataTurnos.getCupoActividad(req.body.gerenciaId);
-        if (cantidadTurnos >= cupo) 
-        {
-            return res.status(422).send({error: 'Ya se alcanzo el cupo maximo para esta gerencia...'});
-        } 
-        console.log('CUPO: '+ cupo)
-        console.log('CANT TURNOS: '+ cantidadTurnos)
-    }
-    let nuevoTurno = {
-        _id: req.params.idTurno,
-        gerenciaId: ObjectId(req.body.gerenciaId),
-        usuarioId: ObjectId(req.body.usuarioId),
-        fechaActividad: req.body.fechaActividad,
-        fechaReserva: dateFormat(new Date(), "isoDateTime"),
-        asistencia: req.body.asistencia
-    }
-    let resultado = await dataTurnos.updateTurno(nuevoTurno)
-    console.log("NUEVO TURNO: "+ JSON.stringify(nuevoTurno))
-    console.log("ACTUALIZACION DE TURNO :" + resultado.result.n)
-    if(resultado.result.n==1){
-        res.send(satisfactorio)
-    }else{
-        res.send(fallido)
-    }
-});
- 
+//========================
 // DELETE /api/turnos/:id
+//========================
 router.delete('/:id', async (req, res, next)=>{
-    let resultado = await dataTurnos.deleteTurno(req.params.id)
-    console.log("TURNO BORRADO:" + resultado.result.n)
-    if(resultado.result.n==1){
-        res.send(satisfactorio)
-    }else{
-        res.send(fallido)
-    }
+    let result = await dataTurnos.deleteTurno(req.params.id)
+      if(result.affectedRows == 1) {
+        result = true
+      } else {
+        result = false
+      }
+      res.send(result)
 });
 
 module.exports = router;
