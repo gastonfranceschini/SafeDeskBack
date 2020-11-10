@@ -8,19 +8,32 @@ router.use(requireAuth);
 const fastcsv = require("fast-csv");
 const fs = require("fs");
 
+
+//=========================
 //GET api/reportes/
+//=========================
 router.get('/', async (req, res, next)=>{
     let reporte = await dataReportes.getReportesEspecificos(req.user.IdTipoDeUsuario)
     res.send(reporte)
 });
 
+
+//===================================================================
 //POST api/reportes/dinamic/:id
+//===================================================================
 router.post('/dinamic/:id', async (req, res, next)=>{
   
-  console.log ("body " + JSON.stringify(req.body));
   try
   {
+      // console.log ("body " + JSON.stringify(req.body));
+
+      console.log(req.params.id)
+      console.log(req.body.campos)
+      console.log(req.body.valores)
+      console.log(req.user.IdTipoDeUsuario)
+
     let reporte = await dataReportes.getReporteDinamico(req.params.id,req.body.campos,req.body.valores,req.user.IdTipoDeUsuario)
+
     //creo un espacio para escribir el csv que trajo el reporte dinamico
     const ws = fs.createWriteStream("reporte.csv");
     const jsonData = JSON.parse(JSON.stringify(reporte));
@@ -56,10 +69,12 @@ router.post('/dinamic/:id', async (req, res, next)=>{
   {
     return res.status(422).send({error: 'Error al procesar la informacion: ' + message });
   }
-
 });
 
+
+//===================================================================
 //GET api/reportes/configuraciones/nombre
+//===================================================================
 router.get('/configuraciones/:nombre', async (req, res, next)=>{
 
   try {
@@ -72,7 +87,10 @@ router.get('/configuraciones/:nombre', async (req, res, next)=>{
   }
 });
 
-//PUT api/reportes/configuraciones/nombre
+
+//===================================================================
+//PUT api/reportes/configuraciones/ :nombre /set/ :valor
+//===================================================================
 router.put('/configuraciones/:nombre/set/:valor', async (req, res, next)=>{
   if (req.user.IdTipoDeUsuario != 4)
     return res.status(422).send({ error: 'Q hace?.' });

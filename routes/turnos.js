@@ -11,9 +11,9 @@ const fallido = 'fallo la reserva del turno'
 
 router.use(requireAuth);
 
-//===================================================
+//===============================================================
 //GET /api/turnos/usuario/:id - Turno más próximo por Usuario ID
-//===================================================
+//===============================================================
 router.get('/usuario/:id', async (req, res, next)=>{
 
     try
@@ -149,7 +149,7 @@ router.get('/', async function(req, res, next) {
 
 //=================
 //POST /api/turnos
-//================
+//=================
 router.post('/', async (req, res, next)=>{
 
     try

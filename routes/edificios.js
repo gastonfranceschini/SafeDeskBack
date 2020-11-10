@@ -5,15 +5,19 @@ const router = express.Router();
 
 router.use(requireAuth);
 
-//GET api/edificios/
+//===================================================
+//GET api/edificios - Trae todos los edificios
+//===================================================
 router.get('/', async (req, res, next)=>{
     let edificios = await dataEdificios.getEdificios()
     res.send(edificios)
 });
 
-//GET api/edificios/id
+//===================================================
+//GET api/edificios/:id - Edificio por ID
+//===================================================
 router.get('/:id', async (req, res, next)=>{
-    const { id } = req.params.id
+    const id = req.params.id
     try {
       let edificio = await dataEdificios.getEdificio(id)
       if(edificio.length == 0)
