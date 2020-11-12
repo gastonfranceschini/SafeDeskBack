@@ -534,7 +534,7 @@ ADD CONSTRAINT `FK_Reportes_Usuarios_idx`
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
 
-  UPDATE `turnosd`.`reportes` SET `IdTipoUsuarioEspecifico` = '4' WHERE (`Id` = '8');
+UPDATE `turnosd`.`reportes` SET `IdTipoUsuarioEspecifico` = '4' WHERE (`Id` = '8');
 UPDATE `turnosd`.`reportes` SET `IdTipoUsuarioEspecifico` = '4' WHERE (`Id` = '7');
 UPDATE `turnosd`.`reportes` SET `IdTipoUsuarioEspecifico` = '4' WHERE (`Id` = '6');
 
