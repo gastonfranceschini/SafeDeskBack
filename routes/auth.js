@@ -26,9 +26,10 @@ router.post('/signin', async (req, res) => {
   if (usuario.Activo == 0) {
     return res.status(422).send({ error: 'Usuario desactivado, comuniquese con el sector de RRHH'});
   }
-
+  let cambioPass = 0;
   if(usuario.Password == '' || bcrypt.compareSync(password, usuario.Password)) 
   {
+    if (usuario.Password == '') cambioPass = 1;
     const token = jwt.sign({ userId: usuario.DNI }, process.env.TokenKey);
     res.send({ 
         token: token, 
@@ -36,7 +37,9 @@ router.post('/signin', async (req, res) => {
         Nombre: usuario.Nombre,
         Email: usuario.Email,
         IdTipoDeUsuario: usuario.IdTipoDeUsuario,
-        IdGerencia: usuario.IdGerencia
+        IdGerencia: usuario.IdGerencia,
+        Gerencia: "Privado",
+        CambioPassObligatorio :  cambioPass
      });
   } else {
     return res.status(422).send({ error: 'Password o DNI invalido!' });

@@ -53,7 +53,7 @@ router.put('/password', async (req, res, next)=>{
       res.send(result)
 
     } else {
-      return res.status(422).send({ error: 'Password Incorrecta!' });
+      return res.status(422).send({ error: 'Password Antigua Incorrecta!' });
     }
   }
   catch ({ message }) 

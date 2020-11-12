@@ -72,7 +72,8 @@ router.get('/configuraciones/:nombre', async (req, res, next)=>{
   }
 });
 
-//PUT api/reportes/configuraciones/nombre
+
+//PUT api/reportes/configuraciones/nombre/set/valor
 router.put('/configuraciones/:nombre/set/:valor', async (req, res, next)=>{
   if (req.user.IdTipoDeUsuario != 4)
     return res.status(422).send({ error: 'Q hace?.' });
