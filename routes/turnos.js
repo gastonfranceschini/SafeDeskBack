@@ -176,18 +176,21 @@ router.post('/', async (req, res, next)=>{
             return res.status(422).send({error: 'No quedan cupos para entrar a ese horario.'});
         }
         
-
+        
+        console.log(req.user.IdGerencia, req.body.IdPiso);
         let idPisoxGerencia = await dataTurnos.getPisoxGerencia(req.user.IdGerencia, req.body.IdPiso)  
-        if(idPisoxGerencia == 0){
+        if(idPisoxGerencia == undefined){
             return res.status(422).send({error: 'No existe esta combinación de gerencias y pisos.'});
         }
+
+
     
         let nuevoTurno = {              
                             idUsuario: req.body.idUsuario,
                             idUsuarioPedido: req.user.DNI,
                             fechaTurno: req.body.fechaTurno,
                             idHorarioEntrada: req.body.idHorarioEntrada,
-                            idPisoxGerencia: req.body.idPisoxGerencia
+                            idPisoxGerencia: idPisoxGerencia
                         }
 
         let turno = await dataTurnos.pushTurno(nuevoTurno)

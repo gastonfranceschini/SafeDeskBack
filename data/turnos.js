@@ -157,16 +157,23 @@ async function getCupoPorPisoEspecifico(IdGerencia, fechaTurno, IdEdificio, IdPi
 }
 
 async function getPisoxGerencia(IdGerencia, IdPiso){
+  console.log(`SELECT Id
+  FROM pisosxgerencias
+  WHERE IdGerencia = ${IdGerencia}
+    AND IdPiso = ${IdPiso}`);
     const pisoxGerencia = await 
       connection.runQuery(`SELECT Id
                             FROM pisosxgerencias
-                            WHERE 	IdGerencia = ${IdGerencia}
+                            WHERE IdGerencia = ${IdGerencia}
                               AND IdPiso = ${IdPiso}`)
 
     return pisoxGerencia[0].Id
 }
 
 async function pushTurno(turno){
+  console.log(`INSERT INTO 
+  turnos(IdUsuario, IdUsuarioPedido, FechaCreacion, FechaTurno, IdHorarioEntrada, IdPisoXGerencia)
+  VALUES(${turno.idUsuario}, ${turno.idUsuarioPedido}, NOW(), '${turno.fechaTurno}', ${turno.idHorarioEntrada}, ${turno.idPisoxGerencia})`)
     const turnoReservado = await 
       connection.runQuery(`INSERT INTO 
                             turnos(IdUsuario, IdUsuarioPedido, FechaCreacion, FechaTurno, IdHorarioEntrada, IdPisoXGerencia)
