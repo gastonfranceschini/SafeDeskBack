@@ -154,10 +154,13 @@ router.post('/', async (req, res, next)=>{
 
     try
     {
+        var fechaDate = new Date(req.body.fechaTurno);
+        fechaDate.setDate(fechaDate.getDate() + 1); //se le suma un dia a la fecha por como formatea node js
+
         //verifico que no sea en fecha pasada
-        if (new Date(req.body.fechaTurno) < new Date()) 
+        if (fechaDate < new Date()) 
         {
-            return res.status(422).send({error: 'Fecha menor a la actual...'});
+            return res.status(422).send({error: 'No puedes sacar un turno para una Fecha menor a la actual...'});
         }
 
         let turnoReservado = await dataTurnos.verificarReserva(req.body.idUsuario, req.body.fechaTurno)
@@ -183,8 +186,6 @@ router.post('/', async (req, res, next)=>{
             return res.status(422).send({error: 'No existe esta combinación de gerencias y pisos.'});
         }
 
-
-    
         let nuevoTurno = {              
                             idUsuario: req.body.idUsuario,
                             idUsuarioPedido: req.user.DNI,

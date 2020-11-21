@@ -18,6 +18,16 @@ router.post('/signin', async (req, res) => {
   usuario = usuario[0];
   console.log("Usuario: " + JSON.stringify(usuario));
 
+  if(password.length < 3) 
+  {
+    return res.status(422).send({ error: 'La password es muy corta, debe contener minimo 3 caracteres!' })
+  }
+
+  if(password.length > 50) 
+  {
+    return res.status(422).send({ error: 'La password es muy larga, debe contener maximo 50 caracteres!' })
+  }
+
   if(usuario == null) 
   {
     return res.status(422).send({ error: 'Password o DNI invalido!' });
@@ -26,6 +36,7 @@ router.post('/signin', async (req, res) => {
   if (usuario.Activo == 0) {
     return res.status(422).send({ error: 'Usuario desactivado, comuniquese con el sector de RRHH'});
   }
+  
   let cambioPass = 0;
   if(usuario.Password == '' || bcrypt.compareSync(password, usuario.Password)) 
   {

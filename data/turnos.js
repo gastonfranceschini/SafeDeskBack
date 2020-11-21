@@ -49,8 +49,9 @@ async function getTurnosDetallesPorUsuario(usuarioId){
                 INNER JOIN pisos p ON p.Id = pxg.IdPiso
                 INNER JOIN edificios e ON e.Id = p.IdEdificio
                 LEFT JOIN horariosentrada he ON he.id = IdHorarioEntrada
-                WHERE FechaTurno > now()
-                AND IdUsuario = ${usuarioId}`)
+                WHERE FechaTurno >= DATE_FORMAT(now(), "%Y-%m-%d")
+                AND IdUsuario = ${usuarioId}
+                order by FechaTurno`)
     return rest
 }
 
@@ -62,8 +63,9 @@ async function getTurnosDetallesHistoricoPorUsuario(usuarioId){
       INNER JOIN pisos p ON p.Id = pxg.IdPiso
       INNER JOIN edificios e ON e.Id = p.IdEdificio
       left JOIN horariosentrada he ON he.id = IdHorarioEntrada
-      WHERE FechaTurno < now()
-      AND IdUsuario = ${usuarioId}`)
+      WHERE FechaTurno < DATE_FORMAT(now(), "%Y-%m-%d")
+      AND IdUsuario = ${usuarioId}
+      order by FechaTurno`)
     return rest
 }
 

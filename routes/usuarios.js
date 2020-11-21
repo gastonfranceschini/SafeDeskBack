@@ -37,6 +37,16 @@ router.put('/password', async (req, res, next)=>{
     {
       return res.status(422).send({ error: 'Usuario no existe!' })
     }
+
+    if(newPassword.length < 3) 
+    {
+      return res.status(422).send({ error: 'La nueva password es muy corta, debe contener minimo 3 caracteres!' })
+    }
+
+    if(newPassword.length > 50) 
+    {
+      return res.status(422).send({ error: 'La nueva password es muy larga, debe contener maximo 50 caracteres!' })
+    }
  
     if(usuario.Password == '' || bcrypt.compareSync(oldPassword, usuario.Password)) 
     {
