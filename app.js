@@ -12,6 +12,7 @@ const edificiosRouter = require('./routes/edificios');
 const turnosRouter = require('./routes/turnos');
 const diagnosticosRouter = require('./routes/diagnosticos');
 const reportesRouter = require('./routes/reportes');
+const cors = require('cors');
 
 var app = express();
 
@@ -24,6 +25,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/api/usuarios', usuariosRouter);
