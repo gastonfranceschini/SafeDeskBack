@@ -10,15 +10,8 @@ const bcrypt = require('bcrypt');
 // GET /api/auth/test PRUEBA
 //=======================================================
 router.get('/test', async function(req, res, next) {
-  try
-  {
-    let usuarios = await dataUsuarios.getUsuarios();
-    res.send(usuarios);
-  }
-  catch ({ message }) 
-  {
-    return res.status(422).send({error: 'Error al procesar request: ' + message });
-  }
+  let usuarios = await dataUsuarios.getUsuarios();
+  res.send(usuarios);
 });
 
 //POST /api/auth/signin
