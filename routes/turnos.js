@@ -179,8 +179,8 @@ router.post('/', async (req, res, next)=>{
             return res.status(422).send({error: 'No quedan cupos para entrar a ese horario.'});
         }
         
-        
         console.log(req.user.IdGerencia, req.body.IdPiso);
+        
         let idPisoxGerencia = await dataTurnos.getPisoxGerencia(req.user.IdGerencia, req.body.IdPiso)  
         if(idPisoxGerencia == undefined){
             return res.status(422).send({error: 'No existe esta combinación de gerencias y pisos.'});

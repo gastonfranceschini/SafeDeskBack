@@ -84,7 +84,9 @@ async function getCupoPorHorarioEntrada(fechaTurno,IdEdificio){
                                                 AND t.FechaTurno = '${fechaTurno}') as Cupo,
                               he.id, he.horario
                               FROM horariosentrada he
-                              WHERE he.IdEdificio = ${IdEdificio}`)
+                              WHERE he.IdEdificio = ${IdEdificio}
+                              GROUP BY he.horario
+                              ORDER BY he.Horario asc`)
     return horariosEntrada
 }
 
