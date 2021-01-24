@@ -5,6 +5,15 @@ require('dotenv').config()
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
+
+//=======================================================
+// GET /api/auth/test PRUEBA
+//=======================================================
+router.get('/test', async function(req, res, next) {
+  let usuarios = await dataUsuarios.getUsuarios();
+  res.send(usuarios);
+});
+
 //POST /api/auth/signin
 router.post('/signin', async (req, res) => {
 
@@ -34,7 +43,7 @@ router.post('/signin', async (req, res) => {
   }
 
   if (usuario.Activo == 0) {
-    return res.status(422).send({ error: 'Usuario desactivado, comuniquese con el sector de RRHH'});
+    return res.status(422).send({ error: 'Usuario desactivado, cominícate con el sector de RRHH'});
   }
   
   let cambioPass = 0;

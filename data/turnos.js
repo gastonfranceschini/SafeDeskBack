@@ -119,7 +119,7 @@ async function getCupoTurnosPorEdificio(IdGerencia, fechaTurno){
                             INNER JOIN edificios e ON e.Id = p.IdEdificio
                             WHERE 	pxg.IdGerencia = ${IdGerencia} 
                             GROUP BY eID, e.Nombre, e.Direccion
-                            HAVING Cupo > 0`)
+                            HAVING Cupo > 0 or min(pxg.cupo) = 0`)
     return cupoTurnosPorEdificio
 }
 
@@ -135,7 +135,7 @@ async function getCupoPorPiso(IdGerencia, fechaTurno, IdEdificio){
                             INNER JOIN pisos p ON p.Id = pxg.IdPiso
                             WHERE 	pxg.IdGerencia = ${IdGerencia} AND p.IdEdificio = ${IdEdificio}
                             GROUP BY pID, p.Nombre, p.Numero
-                            HAVING Cupo > 0`)
+                            HAVING Cupo > 0 or min(pxg.cupo) = 0`)
 
     return cupoTurnosPorPiso
 }
@@ -147,15 +147,22 @@ async function getCupoPorPisoEspecifico(IdGerencia, fechaTurno, IdEdificio, IdPi
                                                     FROM turnos t 
                                                     WHERE t.FechaTurno = '${fechaTurno}' 
                                                     AND t.IdPisoXGerencia = pxg.Id )) as Cupo,
-                                                      p.Id as pID, p.Nombre, p.Numero
+                                                      p.Id as pID, p.Nombre, p.Numero, pxg.Cupo as CupoOriginal
                                                     FROM pisosxgerencias pxg
                                                     INNER JOIN pisos p ON p.Id = pxg.IdPiso
                                                     WHERE pxg.IdGerencia = ${IdGerencia} 
                                                     AND p.IdEdificio = ${IdEdificio} 
                                                     AND p.Id = ${IdPiso} 
-                                                    GROUP BY pID, p.Nombre, p.Numero`)
-
-    return cupoTurnosPorPiso[0].Cupo
+                                                    GROUP BY pID, p.Nombre, p.Numero, pxg.Cupo`)
+    if (cupoTurnosPorPiso[0].CupoOriginal != 0)
+    {
+      return cupoTurnosPorPiso[0].Cupo;
+    }
+    else
+    {
+      return 1;
+    }
+    
 }
 
 async function getPisoxGerencia(IdGerencia, IdPiso){

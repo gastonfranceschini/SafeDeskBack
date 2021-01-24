@@ -10,6 +10,7 @@ async function runQuery(queryString) {
 
        var db = mysql.createConnection({
               host:  process.env.db_hostname, 
+              //port:  33011, 
               database: process.env.db_database,
               user: process.env.db_username,
               password: process.env.db_password 
