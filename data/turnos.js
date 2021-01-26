@@ -91,7 +91,7 @@ async function getCupoPorHorarioEntrada(fechaTurno,IdEdificio){
 }
 
 // cupo x horario de entrada endpoint EDIFICIO
-async function getCupoPorHorarioEntradaEspecifico(fechaTurno,IdEdificio, IdHorario){
+async function getCupoPorHorarioEntradaEspecifico(fechaTurno, IdEdificio, IdHorario){
     const horariosEntrada = await 
       connection.runQuery(`SELECT  he.cupo - (SELECT count(*) FROM turnos t
                 INNER JOIN  pisosxgerencias pxg ON pxg.id = IdPisoXGerencia
@@ -192,12 +192,17 @@ async function pushTurno(turno){
     return turnoReservado
 }
 
-async function verificarReserva(usuarioId, fechaTurno){
+async function verificarReserva(usuarioId, fechaTurno, idEdificio){
     const confirmarReservado = await 
-      connection.runQuery(`SELECT COUNT(IdUsuario) count
-                            FROM turnos 
-                            WHERE IdUsuario = ${usuarioId} 
-                            AND FechaTurno = '${fechaTurno}'`)
+      connection.runQuery(`SELECT COUNT(t.IdUsuario) count
+                            FROM turnos t
+                            INNER JOIN pisosxgerencias pxg 
+                              ON t.IdPisoXGerencia = pxg.Id
+                            INNER JOIN pisos p
+                              ON pxg.IdPiso = p.Id
+                            WHERE t.IdUsuario = ${usuarioId} 
+                              AND t.FechaTurno = '${fechaTurno}'
+                                AND p.IdEdificio = ${idEdificio}`)
     return confirmarReservado[0].count
 }
 

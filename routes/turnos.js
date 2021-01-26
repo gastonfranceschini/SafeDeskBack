@@ -163,18 +163,20 @@ router.post('/', async (req, res, next)=>{
             return res.status(422).send({error: 'No puedes sacar un turno para una Fecha menor a la actual...'});
         }
 
-        let turnoReservado = await dataTurnos.verificarReserva(req.body.idUsuario, req.body.fechaTurno)
+        let turnoReservado = await dataTurnos.verificarReserva(req.body.idUsuario, req.body.fechaTurno, req.body.IdEdificio)
         if(turnoReservado > 0){
-            return res.status(422).send({error: 'Ya tiene turno reservado para ese día.'});
+          return res.status(422).send({error: 'Ya tiene turno reservado para ese día para el mismo sitio.'});
         }
 
+        
         let cupo = await dataTurnos.getCupoPorPisoEspecifico(req.user.IdGerencia, req.body.fechaTurno, req.body.IdEdificio, req.body.IdPiso)  
         
         if(cupo <= 0){
             return res.status(422).send({error: 'No quedan cupos para el piso seleccionado en esta fecha.'});
         }
-        
+                
         let horarioEntrada = await dataTurnos.getCupoPorHorarioEntradaEspecifico(req.body.fechaTurno, req.body.IdEdificio, req.body.idHorarioEntrada)  
+        
         if(horarioEntrada <= 0){
             return res.status(422).send({error: 'No quedan cupos para entrar a ese horario.'});
         }
