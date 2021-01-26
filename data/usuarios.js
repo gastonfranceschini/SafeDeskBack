@@ -56,7 +56,11 @@ async function getUsuariosDependientes(usuario){
 
 async function getUsuarioPorDNI(dni){
     const user = await connection
-          .runQuery(`SELECT * FROM usuarios where DNI = "${dni}"`)
+          .runQuery(`SELECT u.*, g.Nombre as NombreGerencia
+                      FROM usuarios u
+                      INNER JOIN gerencias g
+                        ON g.id = u.IdGerencia
+                      where DNI = "${dni}"`)
     return user
 }
 

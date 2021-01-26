@@ -58,8 +58,8 @@ router.post('/signin', async (req, res) => {
         Email: usuario.Email,
         IdTipoDeUsuario: usuario.IdTipoDeUsuario,
         IdGerencia: usuario.IdGerencia,
-        Gerencia: "Privado",
-        CambioPassObligatorio :  cambioPass
+        Gerencia: usuario.NombreGerencia,
+        CambioPassObligatorio: cambioPass
      });
   } else {
     return res.status(422).send({ error: 'Password o DNI invalido!' });
